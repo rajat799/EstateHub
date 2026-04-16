@@ -347,3 +347,20 @@ function getRowsDelete() {
 
   });
 }
+
+// Dynamic labels for Property Type
+$("#txtProperty").change(function() {
+    if($(this).val() == "Rent") {
+        $("#lblPrice").html('Monthly Rent <span class="text-danger">*</span>');
+    } else {
+        $("#lblPrice").html('Price <span class="text-danger">*</span>');
+    }
+});
+
+$("#txtProperty1").change(function() {
+    if($(this).val() == "Rent") {
+        $("#lblPrice1").html('Monthly Rent <span class="text-danger">*</span>');
+    } else {
+        $("#lblPrice1").html('Price <span class="text-danger">*</span>');
+    }
+});
