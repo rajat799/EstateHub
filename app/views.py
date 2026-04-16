@@ -289,7 +289,7 @@ def adminSellerDetails(request):
 def sellerPurchaser(request):
     if "email" not in request.session or request.session.get("role") != "Seller":
         return redirect("/admin_login/")
-    return render(request, "seller/admin.html")
+    return render(request, "seller/seller_booking.html")
 
 
 def category(request):
@@ -301,7 +301,7 @@ def category(request):
 def sellerPropertiess(request):
     if "email" not in request.session or request.session.get("role") != "Seller":
         return redirect("/admin_login/")
-    return render(request, "seller/properties.html")
+    return render(request, "seller/propertiess.html")
 
 
 def sellerProducts(request):
