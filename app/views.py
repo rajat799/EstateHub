@@ -462,7 +462,11 @@ def sellerProductsDetails(request):
             ).values()
             data = list(data)
             for i in range(len(data)):
-                user_count = PurchasedProducts.objects.filter(pp_name=data[i]["pd_name"]).values("pp_user_email").distinct().count()
+                # Filter by name AND created_by (seller) for accuracy
+                user_count = PurchasedProducts.objects.filter(
+                    pp_name=data[i]["pd_name"], 
+                    pp_created_by=request.session["email"]
+                ).values("pp_user_email").distinct().count()
                 data[i]["user_count"] = user_count
             return JsonResponse(data, safe=False)
 
@@ -476,10 +480,36 @@ def sellerProductsDetails(request):
                 pd_created_by=request.session["email"],
             )
 
-        elif request.POST["action"] == "delete":
-            data = Products.objects.filter(pd_id=request.POST["id"]).update(pd_status=1)
-
         return HttpResponse()
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+def sellerViewOrderDetails(request):
+    try:
+        if "email" not in request.session or request.session.get("role") != "Seller":
+            return JsonResponse({"error": "Unauthorized"}, status=401)
+        
+        product_name = request.POST.get("pd_name")
+        seller_email = request.session["email"]
+        
+        # Get all purchases for this specific product and seller
+        purchases = PurchasedProducts.objects.filter(
+            pp_name=product_name,
+            pp_created_by=seller_email
+        ).values()
+        
+        purchase_list = list(purchases)
+        
+        # We also want to join with Order info to get Address and Mobile
+        for item in purchase_list:
+            order_info = Order.objects.filter(or_id=item["pp_or_id"]).values(
+                "or_name", "or_mobile", "or_address", "or_email", "or_date"
+            ).first()
+            if order_info:
+                item.update(order_info)
+                
+        return JsonResponse(purchase_list, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -789,7 +819,8 @@ def placeOrder(request):
                 pp_desc = dataValue['ct_desc'],
                 pp_qty = dataValue['ct_qty'],
                 pp_total_amount = dataValue['ct_total_amount'],
-                pp_user_email = request.session["web_email"],
+                pp_user_email = dataValue['ct_user_email'],
+                pp_created_by = dataValue['ct_created_by'], # Link to the seller
             )
 
         try:
@@ -815,7 +846,16 @@ def addToCart(request):
     jsonData = Products.objects.filter(pd_id=request.POST["id"]).values()
     data = list(jsonData)
     dictValue = data[0]
-    totalAmount = int(request.POST["selQTY"]) * int(dictValue["pd_price"]);
+    
+    # Sanitize price: remove symbol and comma
+    clean_price = str(dictValue["pd_price"]).replace('₹', '').replace(',', '').strip()
+    try:
+        price_val = int(float(clean_price))
+    except:
+        price_val = 0
+        
+    totalAmount = int(request.POST["selQTY"]) * price_val
+    
     Cart.objects.create(
         ct_image=dictValue["pd_image"],
         ct_name=dictValue["pd_name"],
@@ -825,7 +865,7 @@ def addToCart(request):
         ct_qty=request.POST["selQTY"],
         ct_total_amount=totalAmount,
         ct_user_email=request.session["web_email"],
-        ct_created_by=request.session["web_email"],
+        ct_created_by=dictValue["pd_created_by"], # Store the seller email
     )
 
     return HttpResponse("1")

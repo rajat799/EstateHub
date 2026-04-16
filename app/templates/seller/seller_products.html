@@ -260,6 +260,40 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="order_details_modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Product Order Details</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Customer Name</th>
+                                        <th>Mobile</th>
+                                        <th>Address</th>
+                                        <th>Qty</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderTableData">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -289,7 +323,7 @@
                     if (response.length > 0) {
                         response.forEach((product, index) => {
                             let desc = product.pd_desc.substring(0, 50) + '...';
-                            $('#tableData').append(`
+                             $('#tableData').append(`
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${product.pd_name}</td>
@@ -297,7 +331,13 @@
                                     <td>₹${product.pd_price}</td>
                                     <td>${desc}</td>
                                     <td>${product.pd_date}</td>
-                                    <td><span class="badge bg-info text-white">${product.user_count}</span></td>
+                                    <td>
+                                        <a href="javascript:void(0)" onclick="viewOrderDetails('${product.pd_name}')" title="Click to view customer details">
+                                            <span class="badge bg-info text-white" style="cursor: pointer; padding: 8px 12px; font-size: 14px;">
+                                                <i class="fa fa-users me-1"></i> ${product.user_count}
+                                            </span>
+                                        </a>
+                                    </td>
                                     <td>
                                         <button class="btn btn-sm btn-primary" onclick="editProduct(${product.pd_id}, '${product.pd_name}', '${product.pd_category}', '${product.pd_price}', '${product.pd_desc}', '${product.pd_date}')">Edit</button>
                                         <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.pd_id})">Delete</button>
@@ -400,6 +440,40 @@
                     }
                 });
             }
+        }
+
+        function viewOrderDetails(productName) {
+            $.ajax({
+                type: "POST",
+                url: "/seller_product_orders/",
+                data: {
+                    pd_name: productName,
+                    csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val()
+                },
+                success: function(response) {
+                    $('#orderTableData').html('');
+                    if (response.length > 0) {
+                        response.forEach((item, index) => {
+                            $('#orderTableData').append(`
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td><b>${item.or_name}</b><br><small>${item.or_email}</small></td>
+                                    <td>${item.or_mobile}</td>
+                                    <td>${item.or_address}</td>
+                                    <td>${item.pp_qty}</td>
+                                    <td>${item.or_date}</td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        $('#orderTableData').append('<tr><td colspan="6" class="text-center">No orders found for this product</td></tr>');
+                    }
+                    $('#order_details_modal').modal('show');
+                },
+                error: function() {
+                    alert('Error fetching order details!');
+                }
+            });
         }
     </script>
 </body>

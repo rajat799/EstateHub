@@ -66,6 +66,7 @@ urlpatterns = [
     # Seller backend
     path("seller_properties/", views.sellerPropertiesDetails),
     path("seller_products_details/", views.sellerProductsDetails),
+    path("seller_product_orders/", views.sellerViewOrderDetails),
     path("product_details/", views.adminProductDetails),
 
     path("admin_properties/", views.adminPropertiesDetails),
