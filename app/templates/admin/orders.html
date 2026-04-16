@@ -1,0 +1,210 @@
+{% csrf_token %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords"
+        content="">
+    <meta name="description"
+        content="">
+    <meta name="robots" content="noindex,nofollow">
+    <title> Management System</title>
+    <link rel="icon" type="/static/admin/image/png" sizes="16x16" href="/static/admin/plugins/images/favicon.png">
+    <!-- Custom CSS -->
+   <link href="/static/admin/css/style.min.css" rel="stylesheet">
+   <style type="text/css">
+       .logo-text {
+            color: black !important;
+            font-weight: 900 !important;
+            margin: auto;
+        }
+   </style>
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full"
+        data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
+        {% include "admin/navbar.html" %}
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <!-- User Profile-->
+                        <li class="sidebar-item pt-2">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/admin/"
+                                aria-expanded="false">
+                                <i class="far fa-clock" aria-hidden="true"></i>
+                                <span class="hide-menu">Admin</span>
+                            </a>
+                        </li>
+                         
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/booking/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Booking</span>
+                            </a>
+                        </li>
+                        
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/seller/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Seller</span>
+                            </a>
+                        </li>
+
+                         <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/profile/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Profile</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/properties/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Properties</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/products/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Product</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/orders/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Orders</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/user/"
+                                aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Users</span>
+                            </a>
+                        </li>
+                        
+                    </ul>
+
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+       
+        <div class="page-wrapper">
+            <div class="page-breadcrumb bg-white">
+                <div class="row align-items-center">
+                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                        <div class="d-md-flex">
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+           
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="white-box">
+                            <h3 class="box-title">Orders</h3>
+                            <div class="table-responsive">
+                                <table class="table text-nowrap" id="myTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-top-0">#</th>
+                                            <th class="border-top-0">Date</th>
+                                            <th class="border-top-0">Name</th>
+                                            <th class="border-top-0">Email</th>
+                                            <th class="border-top-0">Mobile</th>
+                                            <th class="border-top-0">Transaction ID</th>
+                                            <th class="border-top-0">Address</th>
+                                            <th class="border-top-0">Amount</th>
+                                            <th class="border-top-0">Action</th>
+                                            
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                     
+                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+
+            <div class="modal fade mt-5" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Products</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table" id="tableDataProducts">
+                                <tr>
+                                    <th>Sl No</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>QTY</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                            </table>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+            
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="/static/admin/plugins/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/static/admin/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/admin/js/app-style-switcher.js"></script>
+    <!--Wave Effects -->
+    <script src="/static/admin/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/static/admin/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/static/admin/js/custom.js"></script>
+    <script src="/static/admin/js/jsOrders.js"></script>
+</body>
+
+</html>

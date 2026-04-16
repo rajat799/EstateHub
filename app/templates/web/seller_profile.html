@@ -1,0 +1,396 @@
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <title>EstateHub - Seller Dashboard</title>
+
+    <!-- Favicons -->
+    <link href="/static/web/img/favicon.png" rel="icon">
+    <link href="/static/web/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Bootstrap CSS File -->
+    <link href="/static/web/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="/static/web/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/web/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/static/web/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/static/web/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+    <!-- Main Stylesheet File -->
+    <link href="/static/web/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    {% include "web/navbar.html" %}
+
+    <main id="main">
+        <!-- ===== SELLER DASHBOARD ===== -->
+        <section id="seller-dashboard" class="section-with-bg">
+            <div class="container">
+                <div class="section-header">
+                    <h2>My Products Dashboard</h2>
+                    <p>Manage your interior products</p>
+                </div>
+
+                <div class="row">
+                    <!-- Add Product Button -->
+                    <div class="col-lg-12">
+                        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal"
+                            data-bs-target="#add_modal">
+                            <i class="fa fa-plus"></i> Add New Product
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Product Name</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableData">
+                                        <tr>
+                                            <td colspan="7" class="text-center">Loading...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== ADD PRODUCT MODAL ===== -->
+    <div class="modal fade" id="add_modal" tabindex="-1" role="dialog" aria-labelledby="add_modalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add_modalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add_form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Product Image <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" id="filePhoto" accept="image/*">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Product Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="txtName" placeholder="e.g., Sofa Set">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Category <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="selCategory">
+                                        <option value="">Select Category</option>
+                                        <option value="Living Room">Living Room</option>
+                                        <option value="Bedroom">Bedroom</option>
+                                        <option value="Dining">Dining</option>
+                                        <option value="Kitchen">Kitchen</option>
+                                        <option value="Office">Office</option>
+                                        <option value="Outdoor">Outdoor</option>
+                                        <option value="Home Decor">Home Decor</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Price (₹) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="txtPrice" placeholder="e.g., 5,000">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Description <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="txtDesc" rows="3"
+                                        placeholder="Product details..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="txtDate">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addProduct()">Add Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EDIT PRODUCT MODAL ===== -->
+    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="edit_modalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_modalLabel">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit_form">
+                        <input type="hidden" id="edit_id">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Product Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="txtName1" placeholder="Product name">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Category <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="selCategory1">
+                                        <option value="">Select Category</option>
+                                        <option value="Living Room">Living Room</option>
+                                        <option value="Bedroom">Bedroom</option>
+                                        <option value="Dining">Dining</option>
+                                        <option value="Kitchen">Kitchen</option>
+                                        <option value="Office">Office</option>
+                                        <option value="Outdoor">Outdoor</option>
+                                        <option value="Home Decor">Home Decor</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Price (₹) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="txtPrice1" placeholder="e.g., 5,000">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Description <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="txtDesc1" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="txtDate1">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProduct()">Update Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer id="footer">
+        <div class="container">
+            <div class="copyright">
+                <div class="credits">© 2026 EstateHub. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/web/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="/static/web/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/web/lib/easing/easing.min.js"></script>
+    <script src="/static/web/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/static/web/lib/lightbox/js/lightbox.min.js"></script>
+
+    <!-- Main Script -->
+    <script src="/static/web/js/main.js"></script>
+
+    <script type="text/javascript">
+        let currentProductId = 0;
+
+        $(document).ready(function() {
+            loadProducts();
+            const today = new Date().toISOString().split('T')[0];
+            $('#txtDate').val(today);
+            $('#txtDate1').val(today);
+        });
+
+        function loadProducts() {
+            $.ajax({
+                type: "POST",
+                url: "/seller_web_products_details/",
+                data: {
+                    action: "getData",
+                    csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val()
+                },
+                success: function(response) {
+                    $('#tableData').html('');
+                    if (response.length > 0) {
+                        response.forEach((product, index) => {
+                            let desc = product.pd_desc.substring(0, 50) + '...';
+                            $('#tableData').append(`
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${product.pd_name}</td>
+                                    <td>${product.pd_category}</td>
+                                    <td>₹${product.pd_price}</td>
+                                    <td>${desc}</td>
+                                    <td>${product.pd_date}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editProduct(${product.pd_id}, '${product.pd_name}', '${product.pd_category}', '${product.pd_price}', '${product.pd_desc}', '${product.pd_date}')">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.pd_id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        $('#tableData').append('<tr><td colspan="7" class="text-center">No products found</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error loading products: ' + xhr.responseText);
+                    $('#tableData').html('<tr><td colspan="7" class="text-center">Failed to load products</td></tr>');
+                }
+            });
+        }
+
+        function addProduct() {
+            let formData = new FormData();
+            formData.append('action', 'add');
+            formData.append('filePhoto', $('#filePhoto')[0].files[0]);
+            formData.append('txtName', $('#txtName').val());
+            formData.append('selCategory', $('#selCategory').val());
+            formData.append('txtPrice', $('#txtPrice').val());
+            formData.append('txtDesc', $('#txtDesc').val());
+            formData.append('txtDate', $('#txtDate').val());
+            formData.append('csrfmiddlewaretoken', $('[name="csrfmiddlewaretoken"]').val());
+
+            $.ajax({
+                type: "POST",
+                url: "/seller_web_products_details/",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('Product added successfully!');
+                    $('#add_modal').modal('hide');
+                    $('#filePhoto').val('');
+                    $('#txtName').val('');
+                    $('#selCategory').val('');
+                    $('#txtPrice').val('');
+                    $('#txtDesc').val('');
+                    loadProducts();
+                },
+                error: function(xhr) {
+                    alert('Error adding product: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function editProduct(id, name, category, price, desc, date) {
+            currentProductId = id;
+            $('#txtName1').val(name);
+            $('#selCategory1').val(category);
+            $('#txtPrice1').val(price);
+            $('#txtDesc1').val(desc);
+            $('#txtDate1').val(date);
+            $('#edit_id').val(id);
+            $('#edit_modal').modal('show');
+        }
+
+        function updateProduct() {
+            let formData = new FormData();
+            formData.append('action', 'update');
+            formData.append('id', $('#edit_id').val());
+            formData.append('txtName1', $('#txtName1').val());
+            formData.append('selCategory1', $('#selCategory1').val());
+            formData.append('txtPrice1', $('#txtPrice1').val());
+            formData.append('txtDesc1', $('#txtDesc1').val());
+            formData.append('txtDate1', $('#txtDate1').val());
+            formData.append('csrfmiddlewaretoken', $('[name="csrfmiddlewaretoken"]').val());
+
+            $.ajax({
+                type: "POST",
+                url: "/seller_web_products_details/",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('Product updated successfully!');
+                    $('#edit_modal').modal('hide');
+                    loadProducts();
+                },
+                error: function(xhr) {
+                    alert('Error updating product: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+
+            let formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', id);
+            formData.append('csrfmiddlewaretoken', $('[name="csrfmiddlewaretoken"]').val());
+
+            $.ajax({
+                type: "POST",
+                url: "/seller_web_products_details/",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('Product deleted successfully!');
+                    loadProducts();
+                },
+                error: function(xhr) {
+                    alert('Error deleting product: ' + xhr.responseText);
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

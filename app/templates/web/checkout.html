@@ -1,0 +1,696 @@
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>EstateHub</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="/static/web/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="/static/web/https://fonts.googleapis.com">
+    <link rel="preconnect" href="/static/web/https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/static/web/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/static/web/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/static/web/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/static/web/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        {% include "web/navbar.html" %}
+
+
+        <!-- Header Start -->
+        <div class="container-fluid header bg-white p-0">
+            <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
+                <div class="col-md-6 p-5 mt-lg-5">
+                    <h1 class="display-5 animated fadeIn mb-4">My Checkout</h1>
+                    <nav aria-label="breadcrumb animated fadeIn">
+                        <ol class="breadcrumb text-uppercase">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <!-- <li class="breadcrumb-item"><a href="#">Pages</a></li> -->
+                            <li class="breadcrumb-item text-body active" aria-current="page">My Checkout</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-6 animated fadeIn">
+                    <img class="img-fluid" src="/static/web/img/header.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+
+
+        <!-- Contact Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="mb-4">
+                    <a href="/productlist/" class="btn btn-outline-primary shadow-sm border-2 px-4 py-2" style="border-radius: 12px; font-weight: 600; transition: all 0.3s ease;">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Shop
+                    </a>
+                </div>
+                <div>
+                    <table id="tableData" class="table">
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>QTY</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mb-5 d-flex">
+            <h3>Total Amount : ₹ </h3><h2 id="totalAmount"></h2>
+        </div>
+
+        <div class="container">
+            <form style="text-align:center" class="row">
+
+                <div class="col-sm-6">
+                    <input type="text" name="" class="form-control" id="txtDate" readonly>
+                </div>
+
+                <div class="col-sm-6">
+                    <input type="text" name="" id="txtName" class="form-control" placeholder="Enter your Name"><br>
+                </div>
+
+                <div class="col-sm-6">
+                    <input type="email" name="" id="txtEmail" class="form-control"
+                    placeholder="Enter your Email"><br>
+                </div>
+
+                <div class="col-sm-6">
+                    <input type="text" name="" id="txtPhone" class="form-control" placeholder="Enter your Phone"
+                    maxlength="10" onkeypress='return event.charCode>=48 && event.charCode<=57'><br>
+                </div>
+
+                <div class="col-sm-12">
+                    <input type="text" name="" id="txtAddress" class="form-control"
+                    placeholder="Enter your Address"><br>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="javascript:void(0)" id="btn_submit" class="btn btn-primary py-3 px-5 me-3 animated fadeIn" onclick="payment();">Place Order</a>
+                </div>
+            </form>
+        </div>
+        
+        
+        <!-- Contact End -->
+
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="text-white mb-4">Get In Touch</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, Subhash nagar, India
+                        </p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+00 1890 0000</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@estatehub.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="text-white mb-4">Quick Links</h5>
+                        <a class="btn btn-link text-white-50" href="/about/">About Us</a>
+                        <a class="btn btn-link text-white-50" href="/contact/">Contact Us</a>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="text-white mb-4">Photo Gallery</h5>
+                        <div class="row g-2 pt-2">
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-1.jpg" alt="" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('/static/web/img/property-1.jpg')">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-2.jpg" alt="" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('/static/web/img/property-2.jpg')">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-3.jpg" alt="" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('/static/web/img/property-3.jpg')">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-4.jpg" alt="" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('/static/web/img/property-4.jpg')">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-5.jpg" alt=""data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('/static/web/img/property-5.jpg')" >
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-6.jpg" alt="" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('/static/web/img/property-6.jpg')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#"></a> All Rights Reserved. Designed By <a
+                                class="border-bottom" href="#">EstateHub</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="/index/">Home</a>
+                                <a href="/help/">Help</a>
+                                <a href="/faq/">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" class="img-fluid" src="" alt="Preview" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/web/lib/wow/wow.min.js"></script>
+    <script src="/static/web/lib/easing/easing.min.js"></script>
+    <script src="/static/web/lib/waypoints/waypoints.min.js"></script>
+    <script src="/static/web/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/static/web/js/main.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</body>
+
+</html>
+
+<script type="text/javascript">
+
+    function showImage(imageSrc) {
+        document.getElementById('modalImage').src = imageSrc;
+    }
+    function getData() {
+        var formData = new FormData();
+        formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+        formData.append("action", "getData");
+        let totalAmount = 0;
+        $.ajax({
+
+            url: "/my_cart_list/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#tableData tr:gt(0)").remove();
+                for (var i = 0; i < response.length; i++) {
+                    var j = i + 1;
+                    $("#tableData").append('<tr><td>' + j + '</td><td style="display: none;">' + response[i].ct_id + '</td><td>' + response[i].ct_name + '</td><td>' + response[i].ct_category + '</td><td>' + response[i].ct_price + '</td><td>' + response[i].ct_qty + '</td><td>' + response[i].ct_total_amount + '</td><td><button type="button" onClick="removeCart(' + response[i].ct_id + ');" class="btn btn-danger">Remove From Cart</button></td></tr>');
+
+                    totalAmount += Number( response[i].ct_total_amount);
+                }
+
+                $("#totalAmount").text(totalAmount);
+
+            },
+            error: function (request, error) {
+                console.error(error);
+            },
+            complete: function () {
+
+            },
+        });
+
+    }
+    getData();
+
+    // Handle payment method change (removed - no longer needed)
+
+    function removeCart(bookingID) {
+
+        var formData = new FormData();
+        formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+        formData.append("cartID", bookingID);
+        $.ajax({
+            url: "/remove_cart/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                alert("Product removed from cart successfully");
+                location.reload();
+            },
+            error: function (request, error) {
+                console.error(error);
+            },
+            complete: function () {
+            },
+        });
+    }
+
+    function getProfile() {
+
+        let formData = new FormData();
+        formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+        formData.append("action", "getData");
+
+        $.ajax({
+
+            url: "/user_profile_details/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#txtName").val(response[0].us_name);
+                $("#txtEmail").val(response[0].us_email);
+                $("#txtPhone").val(response[0].us_mobile);
+            },
+            error: function (request, error) {
+                console.error(error);
+            },
+            complete: function () {
+
+            },
+        });
+
+    }
+    getProfile();
+
+    function payment() {
+
+        if ($("#txtName").val().trim().length < 1) {
+            alert("Please Enter Name");
+            $("#txtName").focus();
+            return false;
+        }
+
+        if ($("#txtEmail").val().trim().length < 1) {
+            alert("Please Enter Email ");
+            $("#txtEmail").focus();
+            return false;
+        }
+
+        if ($("#txtPhone").val().trim().length < 10) {
+            alert("Please Enter Phone No");
+            $("#txtPhone").focus();
+            return false;
+        }
+
+        if ($("#txtAddress").val().trim().length < 1) {
+            alert("Please Enter Address");
+            $("#txtAddress").focus();
+            return false;
+        }
+
+        // Open Razorpay popup with UPI section inside
+        processRazorpayPayment();
+    }
+
+    function processRazorpayPayment() {
+        var totalAmount = $("#totalAmount").text();
+        var name = $("#txtName").val();
+        var email = $("#txtEmail").val();
+        var phone = $("#txtPhone").val();
+        
+        // Generate dummy transaction ID
+        var dummyTransId = "pay_" + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase();
+        
+        // Show Razorpay modal with all payment options
+        showRazorpayPaymentModal(totalAmount, name, email, phone, dummyTransId);
+    }
+    
+    function showRazorpayPaymentModal(totalAmount, name, email, phone, dummyTransId) {
+        // Create Razorpay modal with multiple payment options
+        const razorpayModal = `
+            <div class="modal fade" id="razorpayPaymentModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 25px 75px rgba(0,0,0,0.35); border: none; overflow: hidden;">
+                        <!-- Header -->
+                        <div class="modal-header" style="background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%); color: white; border: none; padding: 25px; border-radius: 15px 15px 0 0;">
+                            <h5 class="modal-title" style="font-weight: bold; font-size: 18px;">💳 Razorpay Payment</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        
+                        <!-- Body -->
+                        <div class="modal-body" style="padding: 30px;">
+                            <!-- Amount Section -->
+                            <div style="text-align: center; margin-bottom: 25px;">
+                                <p style="color: #999; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;">Amount to Pay</p>
+                                <h2 style="color: #0d6efd; font-weight: bold; font-size: 40px; margin: 0;">₹${totalAmount}</h2>
+                            </div>
+                            
+                            <hr style="margin: 25px 0; border: 1px solid #e9ecef;">
+                            
+                            <!-- Payment Methods Tabs -->
+                            <div style="margin-bottom: 25px;">
+                                <p style="color: #333; font-weight: 600; font-size: 14px; margin-bottom: 15px;">Select Payment Method</p>
+                                
+                                <!-- UPI Tab -->
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s;" onclick="togglePaymentMethodCheckout(this, 'upi')">
+                                        <input type="radio" name="paymentMethod" value="upi" checked style="width: 18px; height: 18px; margin-right: 12px; cursor: pointer;">
+                                        <span style="font-weight: 600; color: #333; font-size: 14px; flex: 1;">📱 UPI</span>
+                                    </label>
+                                    <div id="upi-section-co" style="padding: 12px 15px; background: #f8f9fa; border-radius: 0 0 8px 8px; border: 2px solid #e9ecef; border-top: none; display: block;">
+                                        <input type="text" id="razorpayUpiField" class="form-control" placeholder="yourname@upi" 
+                                               style="border: 1px solid #ddd; padding: 10px; border-radius: 6px; font-size: 13px;">
+                                        <small style="color: #666; font-size: 11px; margin-top: 5px; display: block;">Example: name@okhdfcbank, user@icici</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card Tab -->
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s;" onclick="togglePaymentMethodCheckout(this, 'card')">
+                                        <input type="radio" name="paymentMethod" value="card" style="width: 18px; height: 18px; margin-right: 12px; cursor: pointer;">
+                                        <span style="font-weight: 600; color: #333; font-size: 14px; flex: 1;">💳 Debit/Credit Card</span>
+                                    </label>
+                                    <div id="card-section-co" style="padding: 12px 15px; background: #f8f9fa; border-radius: 0 0 8px 8px; border: 2px solid #e9ecef; border-top: none; display: none;">
+                                        <input type="text" id="razorpayCardField" class="form-control" placeholder="Card Number (4111111111111111)" 
+                                               style="border: 1px solid #ddd; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 8px;">
+                                        <small style="color: #666; font-size: 11px; display: block;">Test Card: 4111111111111111</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Wallet Tab -->
+                                <div>
+                                    <label style="display: flex; align-items: center; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s;" onclick="togglePaymentMethodCheckout(this, 'wallet')">
+                                        <input type="radio" name="paymentMethod" value="wallet" style="width: 18px; height: 18px; margin-right: 12px; cursor: pointer;">
+                                        <span style="font-weight: 600; color: #333; font-size: 14px; flex: 1;">👝 Wallet/PayTM</span>
+                                    </label>
+                                    <div id="wallet-section-co" style="padding: 12px 15px; background: #f8f9fa; border-radius: 0 0 8px 8px; border: 2px solid #e9ecef; border-top: none; display: none;">
+                                        <input type="text" id="razorpayWalletField" class="form-control" placeholder="Wallet ID" 
+                                               style="border: 1px solid #ddd; padding: 10px; border-radius: 6px; font-size: 13px;">
+                                        <small style="color: #666; font-size: 11px; margin-top: 5px; display: block;">Example: 9876543210 (PayTM/Wallet ID)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="modal-footer" style="border-top: 1px solid #e9ecef; padding: 15px 30px; background: #f8f9fa;">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 6px; padding: 10px 25px; font-weight: 600;">Close</button>
+                            <button type="button" class="btn btn-primary" style="background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%); border: none; border-radius: 6px; padding: 10px 30px; font-weight: 600;" onclick="processCheckoutPaymentNow('${totalAmount}', '${dummyTransId}')">Pay ₹${totalAmount}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        $('#razorpayPaymentModal').remove();
+        $('body').append(razorpayModal);
+        
+        const modal = new bootstrap.Modal(document.getElementById('razorpayPaymentModal'));
+        modal.show();
+    }
+    
+    function togglePaymentMethodCheckout(label, method) {
+        // Hide all sections
+        document.getElementById('upi-section-co').style.display = 'none';
+        document.getElementById('card-section-co').style.display = 'none';
+        document.getElementById('wallet-section-co').style.display = 'none';
+        
+        // Remove border highlight from all
+        document.querySelectorAll('[onclick*="togglePaymentMethodCheckout"]').forEach(el => {
+            el.style.borderColor = '#e9ecef';
+            el.style.background = 'white';
+        });
+        
+        // Show selected section
+        document.getElementById(method + '-section-co').style.display = 'block';
+        label.style.borderColor = '#0d6efd';
+        label.style.background = '#f0f7ff';
+    }
+    
+    function processCheckoutPaymentNow(totalAmount, dummyTransId) {
+        const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+        let valid = false;
+        
+        if (method === 'upi') {
+            const upi = document.getElementById('razorpayUpiField').value.trim();
+            if (upi.length > 0) valid = true;
+            else {
+                alert("Please enter UPI ID");
+                document.getElementById('razorpayUpiField').focus();
+            }
+        } else if (method === 'card') {
+            const card = document.getElementById('razorpayCardField').value.trim();
+            if (card.length > 0) valid = true;
+            else {
+                alert("Please enter Card Number");
+                document.getElementById('razorpayCardField').focus();
+            }
+        } else if (method === 'wallet') {
+            const wallet = document.getElementById('razorpayWalletField').value.trim();
+            if (wallet.length > 0) valid = true;
+            else {
+                alert("Please enter Wallet ID");
+                document.getElementById('razorpayWalletField').focus();
+            }
+        }
+        
+        if (!valid) return;
+        
+        // Close modal and process payment
+        bootstrap.Modal.getInstance(document.getElementById('razorpayPaymentModal')).hide();
+        
+        setTimeout(() => {
+            showPaymentSuccessAnimation(dummyTransId, totalAmount);
+        }, 300);
+    }
+    
+    function showPaymentSuccessAnimation(transId, amount) {
+        window.successTransId = transId;
+        window.successAmount = amount;
+        
+        var successHTML = '' +
+            '<div id="paymentSuccessOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 99999;">' +
+                '<canvas id="confettiCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100000;"></canvas>' +
+                '<div id="successCard" style="background: white; padding: 45px 40px; border-radius: 24px; text-align: center; max-width: 420px; width: 90%; box-shadow: 0 25px 80px rgba(0,0,0,0.4); animation: successSlideUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; z-index: 100001;">' +
+                    
+                    '<!-- Animated Checkmark -->' +
+                    '<div style="position: relative; width: 100px; height: 100px; margin: 0 auto 25px;">' +
+                        '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; border: 3px solid rgba(40,167,69,0.2); animation: successPulseRing 2s ease-out infinite;"></div>' +
+                        '<div style="width: 100px; height: 100px; background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #17a2b8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: successBounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 10px 40px rgba(40, 167, 69, 0.4);">' +
+                            '<svg width="55" height="55" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                                '<polyline points="20 6 9 17 4 12" style="animation: successCheckDraw 0.6s ease-out 0.4s forwards; stroke-dasharray: 30; stroke-dashoffset: 30;"></polyline>' +
+                            '</svg>' +
+                        '</div>' +
+                    '</div>' +
+                    
+                    '<!-- Success Text -->' +
+                    '<h2 style="color: #28a745; font-size: 26px; margin: 0 0 8px; font-weight: 800; animation: successFadeIn 0.6s ease-out 0.3s both;">Payment Successful!</h2>' +
+                    '<p style="color: #888; font-size: 14px; margin: 0 0 25px; animation: successFadeIn 0.6s ease-out 0.5s both;">Your order has been confirmed</p>' +
+                    
+                    '<!-- Transaction Details -->' +
+                    '<div style="background: linear-gradient(135deg, #f8fffe 0%, #f0fdf4 100%); padding: 18px 20px; border-radius: 14px; margin: 0 0 25px; border: 1px solid #d4edda; animation: successFadeIn 0.6s ease-out 0.6s both;">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">' +
+                            '<span style="color: #888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Transaction ID</span>' +
+                            '<span style="font-family: monospace; color: #28a745; font-weight: 700; font-size: 12px; word-break: break-all; text-align: right; max-width: 60%;">' + transId + '</span>' +
+                        '</div>' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+                            '<span style="color: #888; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Amount Paid</span>' +
+                            '<span style="color: #28a745; font-weight: 800; font-size: 24px;">&#8377;' + amount + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    
+                    '<!-- Action Button -->' +
+                    '<button type="button" onclick="placeOrderAndRedirect()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: 700; border-radius: 12px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 6px 25px rgba(40, 167, 69, 0.35); animation: successFadeIn 0.6s ease-out 0.7s both; letter-spacing: 0.3px;" onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 30px rgba(40,167,69,0.5)\'" onmouseout="this.style.transform=\'translateY(0)\';this.style.boxShadow=\'0 6px 25px rgba(40,167,69,0.35)\'">' +
+                        '<i class="fas fa-shopping-bag" style="margin-right: 8px;"></i>View My Orders' +
+                    '</button>' +
+                    
+                '</div>' +
+            '</div>' +
+            
+            '<style>' +
+                '@keyframes successSlideUp { from { transform: translateY(60px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }' +
+                '@keyframes successBounceIn { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 70% { transform: scale(0.9); } 100% { transform: scale(1); } }' +
+                '@keyframes successCheckDraw { to { stroke-dashoffset: 0; } }' +
+                '@keyframes successFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }' +
+                '@keyframes successPulseRing { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.5); opacity: 0; } }' +
+                '@keyframes confettiFall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }' +
+            '</style>';
+        
+        // Remove old overlay if any
+        $('#paymentSuccessOverlay').remove();
+        $('body').append(successHTML);
+        
+        // Trigger confetti
+        launchConfetti();
+    }
+    
+    // ===== CONFETTI ANIMATION =====
+    function launchConfetti() {
+        var canvas = document.getElementById('confettiCanvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        var particles = [];
+        var colors = ['#28a745', '#20c997', '#0d6efd', '#ffc107', '#e83e8c', '#6f42c1', '#fd7e14', '#17a2b8'];
+        
+        for (var i = 0; i < 150; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 6 + 3,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: (Math.random() - 0.5) * 4,
+                vy: Math.random() * 3 + 2,
+                rotation: Math.random() * 360,
+                rotationSpeed: (Math.random() - 0.5) * 10,
+                opacity: 1
+            });
+        }
+        
+        var startTime = Date.now();
+        function animate() {
+            var elapsed = Date.now() - startTime;
+            if (elapsed > 4000) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.05;
+                p.rotation += p.rotationSpeed;
+                
+                if (elapsed > 3000) {
+                    p.opacity = Math.max(0, 1 - (elapsed - 3000) / 1000);
+                }
+                
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                ctx.restore();
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // ===== PLACE ORDER AND REDIRECT =====
+    function placeOrderAndRedirect() {
+        // Show loading state on button
+        var btn = event.target.closest('button');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>Placing Order...';
+        }
+        
+        order(window.successTransId, window.successAmount);
+    }
+
+
+    function order(trasID, totalAmount) {
+
+        let formData = new FormData();
+        formData.append("txtDate", $('#txtDate').val());
+        formData.append("txtName", $('#txtName').val());
+        formData.append("txtEmail", $('#txtEmail').val());
+        formData.append("txtAddress", $('#txtAddress').val());
+        formData.append("txtPhone", $('#txtPhone').val());
+        formData.append("email", $("#email").val());
+        formData.append("transaction_id", trasID);
+        formData.append("totalAmount", totalAmount);
+
+        formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+
+        $.ajax({
+            beforeSend: function () {
+                $("#btn_submit").attr("disabled", true);
+            },
+            url: "/place_order/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                window.location.href = "/my_orders/";
+            },
+            error: function (request, error) {
+                console.error("Order error:", error);
+                alert("There was an error placing your order. Please try again.");
+                var btn = document.querySelector('#paymentSuccessOverlay button');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-shopping-bag" style="margin-right: 8px;"></i>View My Orders';
+                }
+            },
+            complete: function () {
+                $("#btn_submit").attr("disabled", false);
+            },
+        });
+
+    }
+
+    var today = new Date();
+    var day = String(today.getDate()).padStart(2, '0');
+    var month = String(today.getMonth() + 1).padStart(2, '0');
+    var year = today.getFullYear();
+    var formattedDate = day + '-' + month + '-' + year;
+    document.getElementById("txtDate").value = formattedDate;
+</script>

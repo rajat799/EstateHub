@@ -1,0 +1,262 @@
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>EstateHub - User Register</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="/static/web/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="/static/web/https://fonts.googleapis.com">
+    <link rel="preconnect" href="/static/web/https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/static/web/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/static/web/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/static/web/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/static/web/css/style.css" rel="stylesheet">
+
+    <style type="text/css">
+        body {
+            background-color: white;
+        }
+
+        .img {
+            height: 800px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Header Start -->
+        <div class="container-fluid header bg-white p-0">
+            <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
+                <div class="col-md-6 p-5 mt-lg-5">
+                    <h1 class="display-5 animated fadeIn mb-4 mt-5">REGISTER</h1>
+
+                    <div class="row">
+
+                        <div class="form-group col-12">
+                            <label>Name</label>
+                            <input type="text" id="txtName" class="form-control" onkeypress="return alphaOnly(event);">
+                        </div>
+
+                        <div class="form-group col-12">
+                            <label>Email</label>
+                            <input type="text" id="txtEmail" class="form-control">
+                        </div>
+                        <div class="form-group col-12">
+                            <label>Mobile No.</label>
+                            <input type="text" id="txtMobile" class="form-control" maxlength="10"
+                                onkeypress="return isNumberKey(event);">
+                        </div>
+                        <br>
+                        <div class="form-group col-12">
+                            <br>
+                            <label>Password</label>
+                            <input type="password" id="txtPassword" class="form-control">
+                            <input type="checkbox" id="showPassword"> Show Password
+
+                        </div>
+
+                        <br />
+                        <br />
+
+
+                        <div class="form-group col-12 text-center py-3">
+                            <!-- <label>Password</label> -->
+
+                            <input type="button" id="btn_submit" value="Register" class="btn btn-success">
+                        </div>
+
+                        <p class="text-center"> Already have an account?<a href="/web_login/">Login</a></p>
+                        <a href="/" class="text-center">Go to website</a>
+
+                    </div>
+                </div>
+                <div class="col-md-6 animated fadeIn">
+                    <img class="img-fluid img" src="/static/web/img/header.jpg" height="800" alt="">
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/web/lib/wow/wow.min.js"></script>
+    <script src="/static/web/lib/easing/easing.min.js"></script>
+    <script src="/static/web/lib/waypoints/waypoints.min.js"></script>
+    <script src="/static/web/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/static/web/js/main.js"></script>
+</body>
+
+</html>
+
+<script type="text/javascript">
+
+    function validateEmail(paramEmailID) {
+        var filter = /^[0-9a-z.]+\@[a-z0-9]+\.[a-zA-z0-9]{2,4}$/;
+
+        if (filter.test(paramEmailID)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function alphaOnly(event) {
+        var key = event.which ? event.which : event.keyCode;
+        return (
+            (key >= 65 && key <= 90) ||
+            key == 8 ||
+            (event.charCode >= 97 && event.charCode <= 122) ||
+            event.charCode == 32
+        );
+    }
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    $(document).ready(function () {
+
+        $("#btn_submit").click(function () {
+
+            if ($("#txtName").val() == "") {
+                alert("Please Enter Name");
+                $("#txtName").focus();
+                return false;
+            }
+
+            if ($("#txtEmail").val() == "") {
+                alert("Please Enter Email");
+                $("#txtEmail").focus();
+                return false;
+            }
+
+            if (!validateEmail($("#txtEmail").val())) {
+                alert("Please Enter Valid Email");
+                $("#txtEmail").focus();
+                return false;
+            }
+            if ($("#txtMobile").val().trim().length < 10) {
+                alert("Please Enter Mobile Number");
+                $("#txtMobile").focus();
+                return false;
+            }
+
+            let arr = ['9','8','7','6'];
+           let numberExist = arr.indexOf($("#txtMobile").val().substring(0,1))
+           // alert(numberExist);
+
+           if(numberExist == -1) {
+               alert("Please Enter Valid Mobile Number");
+               return false;
+           }
+
+            if ($("#txtPassword").val() == "") {
+                alert("Please Enter Password");
+                $("#txtPassword").focus();
+                return false;
+            }
+
+            // pass = document.getElementById("txtPassword").value;
+            // console.log(pass);
+            // regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            // if (regex.exec(pass) == null) {
+            //  alert('Please Enter Valid Password Format');
+            //   return false;
+            // }
+
+            // alert("alert");
+            var formData = new FormData();
+            formData.append("txtName", $("#txtName").val());
+            formData.append("txtEmail", $("#txtEmail").val());
+            formData.append("txtMobile", $("#txtMobile").val());
+            formData.append("txtPassword", $("#txtPassword").val());
+            formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+            formData.append("action", "add");
+
+            // var table = $("#dataTables-example").DataTable();
+
+            $.ajax({
+                beforeSend: function () {
+                    $(".btn .spinner-border").show();
+                    $("#btn_submit").attr("disabled", true);
+                },
+                url: "/user_register/",
+                type: "POST",
+                // headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // Handle both JSON response (new) and plain text (old) formats
+                    if (typeof response === 'object') {
+                        // New JSON format
+                        if (response.status === 'success') {
+                            alert(response.message || "User Registered Successfully");
+                            window.location = '/web_login/';
+                        } else {
+                            alert(response.message || "Registration failed");
+                        }
+                    } else if (response == "10") {
+                        alert("You are already Registered User, Please Login");
+                    } else {
+                        alert("User Registered Successfully");
+                        window.location = '/web_login/';
+                    }
+                },
+                error: function (request, error) {
+                    console.error(error);
+                },
+                complete: function () {
+                    $(".btn .spinner-border").hide();
+                    $("#btn_submit").attr("disabled", false);
+                },
+            });
+        });
+    });
+    
+    $(document).ready(function() {
+        $("#showPassword").change(function(){
+            $(this).prop("checked") ?  $("#txtPassword").prop("type", "text") : $("#txtPassword").prop("type", "password");    
+        });
+    });
+
+</script>

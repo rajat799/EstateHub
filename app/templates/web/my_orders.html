@@ -1,0 +1,530 @@
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>EstateHub - My Orders</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="orders, property management" name="keywords">
+    <meta content="View your order history" name="description">
+
+    <!-- Favicon -->
+    <link href="/static/web/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/static/web/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/static/web/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/static/web/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/static/web/css/style.css" rel="stylesheet">
+
+    <style>
+        /* ===== SMOOTH TRANSITIONS ===== */
+        .order-card, .product-row, .btn-view-products, .order-header {
+            transition: all 0.3s ease;
+        }
+
+        /* ===== ORDER CARDS ===== */
+        .order-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            animation: slideInUp 0.4s ease-out forwards;
+            opacity: 0;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+        }
+
+        .order-header:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        }
+
+        .order-id-badge {
+            background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .order-status {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .order-details {
+            padding: 20px 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .order-detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-detail-item label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .order-detail-item span {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .order-amount {
+            font-size: 22px !important;
+            color: #28a745 !important;
+            font-weight: 700 !important;
+        }
+
+        /* ===== PRODUCTS SECTION ===== */
+        .order-products-section {
+            border-top: 1px solid #e9ecef;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+        }
+
+        .order-products-section.show {
+            max-height: 2000px;
+            padding: 20px 25px;
+        }
+
+        .product-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .product-row:hover {
+            background: #e9ecef;
+        }
+
+        .product-row img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info h6 {
+            margin: 0 0 4px 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .product-info small {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .product-qty-price {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .product-qty-price .price {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 15px;
+        }
+
+        .product-qty-price .qty {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .btn-view-products {
+            background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-view-products:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+            color: white;
+        }
+
+        .btn-view-products i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-view-products.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .empty-orders {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-orders i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        {% include "web/navbar.html" %}
+
+
+        <!-- Header Start -->
+        <div class="container-fluid header bg-white p-0">
+            <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
+                <div class="col-md-6 p-5 mt-lg-5">
+                    <h1 class="display-5 animated fadeIn mb-4">My Orders</h1>
+                    <nav aria-label="breadcrumb animated fadeIn">
+                        <ol class="breadcrumb text-uppercase">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item text-body active" aria-current="page">My Orders</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-6 animated fadeIn">
+                    <img class="img-fluid" src="/static/web/img/header.jpg" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+
+
+        <!-- Orders Section -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div id="ordersContainer">
+                    <!-- Orders will be loaded here dynamically -->
+                </div>
+                <div id="emptyOrdersMsg" class="empty-orders d-none">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h4>No Orders Yet</h4>
+                    <p>You haven't placed any orders. Start shopping now!</p>
+                    <a href="/productlist/" class="btn btn-primary mt-3">Browse Products</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="text-white mb-4">Get In Touch</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, Subhash nagar, India
+                        </p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+00 1890 0000</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@estatehub.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="text-white mb-4">Quick Links</h5>
+                        <a class="btn btn-link text-white-50" href="/about/">About Us</a>
+                        <a class="btn btn-link text-white-50" href="/contact/">Contact Us</a>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="text-white mb-4">Photo Gallery</h5>
+                        <div class="row g-2 pt-2">
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-1.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-2.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-3.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-4.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-5.jpg" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1" src="/static/web/img/property-6.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#"></a> All Rights Reserved. Designed By <a
+                                class="border-bottom" href="#">EstateHub</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="/index/">Home</a>
+                                <a href="/help/">Help</a>
+                                <a href="/faq/">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" class="img-fluid" src="" alt="Preview" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/web/lib/wow/wow.min.js"></script>
+    <script src="/static/web/lib/easing/easing.min.js"></script>
+    <script src="/static/web/lib/waypoints/waypoints.min.js"></script>
+    <script src="/static/web/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/static/web/js/main.js"></script>
+</body>
+
+</html>
+
+<script type="text/javascript">
+
+    function showImage(imageSrc) {
+        document.getElementById('modalImage').src = imageSrc;
+    }
+
+    function getData() {
+        var formData = new FormData();
+        formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+        formData.append("action", "getData");
+
+        $.ajax({
+            url: "/my_order_list/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#ordersContainer").empty();
+
+                if (response.length === 0) {
+                    $("#emptyOrdersMsg").removeClass("d-none");
+                    return;
+                }
+
+                $("#emptyOrdersMsg").addClass("d-none");
+
+                for (var i = 0; i < response.length; i++) {
+                    var orderNum = i + 1;
+                    var delay = (i * 0.1);
+
+                    var cardHTML = '' +
+                        '<div class="order-card" style="animation-delay: ' + delay + 's;">' +
+                            '<div class="order-header" onclick="toggleProducts(' + response[i].or_id + ', this)">' +
+                                '<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">' +
+                                    '<span class="order-id-badge">Order #' + orderNum + '</span>' +
+                                    '<span class="order-status"><i class="fas fa-check-circle me-1"></i>' + (response[i].or_status || 'Success') + '</span>' +
+                                '</div>' +
+                                '<button class="btn-view-products" id="btnProducts_' + response[i].or_id + '">' +
+                                    '<i class="fas fa-chevron-down"></i> View Items' +
+                                '</button>' +
+                            '</div>' +
+                            '<div class="order-details">' +
+                                '<div class="order-detail-item">' +
+                                    '<label><i class="far fa-calendar me-1"></i>Date</label>' +
+                                    '<span>' + response[i].or_date + '</span>' +
+                                '</div>' +
+                                '<div class="order-detail-item">' +
+                                    '<label><i class="far fa-user me-1"></i>Name</label>' +
+                                    '<span>' + response[i].or_name + '</span>' +
+                                '</div>' +
+                                '<div class="order-detail-item">' +
+                                    '<label><i class="fas fa-receipt me-1"></i>Transaction ID</label>' +
+                                    '<span style="font-family: monospace; font-size: 12px; word-break: break-all;">' + response[i].or_transaction_id + '</span>' +
+                                '</div>' +
+                                '<div class="order-detail-item">' +
+                                    '<label><i class="fas fa-map-marker-alt me-1"></i>Address</label>' +
+                                    '<span>' + response[i].or_address + '</span>' +
+                                '</div>' +
+                                '<div class="order-detail-item">' +
+                                    '<label><i class="fas fa-rupee-sign me-1"></i>Total Amount</label>' +
+                                    '<span class="order-amount">&#8377;' + String(response[i].or_total_amount).replace(/[^\d.]/g, '') + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="order-products-section" id="orderProducts_' + response[i].or_id + '">' +
+                                '<div class="text-center py-3">' +
+                                    '<div class="spinner-border spinner-border-sm text-primary" role="status"></div>' +
+                                    '<span class="ms-2 text-muted">Loading products...</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+
+                    $("#ordersContainer").append(cardHTML);
+                }
+            },
+            error: function (request, error) {
+                console.error(error);
+            },
+            complete: function () {
+            },
+        });
+    }
+
+    getData();
+
+    function toggleProducts(orderID, headerEl) {
+        var section = document.getElementById('orderProducts_' + orderID);
+        var btn = document.getElementById('btnProducts_' + orderID);
+
+        if (section.classList.contains('show')) {
+            // Collapse
+            section.classList.remove('show');
+            btn.classList.remove('expanded');
+            btn.innerHTML = '<i class="fas fa-chevron-down"></i> View Items';
+            return;
+        }
+
+        // Expand and load products
+        section.classList.add('show');
+        btn.classList.add('expanded');
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Hide Items';
+
+        // Load the products for this specific order
+        var formData = new FormData();
+        formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
+        formData.append("orderID", orderID);
+
+        $.ajax({
+            url: "/view_products/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                var productsHTML = '<h6 style="color: #333; margin-bottom: 15px; font-weight: 600;"><i class="fas fa-box me-2 text-primary"></i>Order Items (' + response.length + ')</h6>';
+
+                for (var i = 0; i < response.length; i++) {
+                    var img = response[i].pp_image.substring(3);
+                    productsHTML += '' +
+                        '<div class="product-row">' +
+                            '<img src="' + img + '" alt="' + response[i].pp_name + '" onerror="this.src=\'/static/web/img/property-1.jpg\'">' +
+                            '<div class="product-info">' +
+                                '<h6>' + response[i].pp_name + '</h6>' +
+                                '<small><i class="fas fa-tag me-1"></i>' + response[i].pp_category + '</small>' +
+                            '</div>' +
+                            '<div class="product-qty-price">' +
+                                '<div class="price">&#8377;' + response[i].pp_total_amount + '</div>' +
+                                '<div class="qty">Qty: ' + response[i].pp_qty + ' x &#8377;' + response[i].pp_price + '</div>' +
+                            '</div>' +
+                        '</div>';
+                }
+
+                $('#orderProducts_' + orderID).html(productsHTML);
+            },
+            error: function (request, error) {
+                console.error(error);
+                $('#orderProducts_' + orderID).html('<div class="text-center text-danger py-3"><i class="fas fa-exclamation-circle me-2"></i>Failed to load products</div>');
+            },
+        });
+    }
+
+</script>

@@ -1,0 +1,88 @@
+<!-- Navbar Start -->
+<div class="container-fluid nav-bar bg-transparent">
+    <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
+        <a href="/" class="navbar-brand d-flex align-items-center text-center">
+            <h4 class="m-0 text-primary">EstateHub</h4>
+        </a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto">
+                <a href="/" class="nav-item nav-link">Home</a>
+                <a href="/propertylist/" class="nav-item nav-link">Properties</a>
+                <a href="/latest_properties/" class="nav-item nav-link">Latest Properties</a>
+                <a href="/productlist/" class="nav-item nav-link">Shop Interior</a>
+                <a href="/about/" class="nav-item nav-link">About</a>
+                <a href="/contact/" class="nav-item nav-link">Contact</a>
+                <a href="/cart/" class="nav-item nav-link"><i class="fas fa-shopping-cart"></i></a>
+            </div>
+            {% if request.session.web_email %}
+            <div class="d-flex align-items-center gap-3">
+                <!-- Profile Circle Dropdown -->
+                <div class="position-relative">
+                    <button class="btn p-0 d-flex align-items-center justify-content-center rounded-circle" 
+                            id="profileBtn" 
+                            style="width: 40px; height: 40px; background-color: #007bff; color: white; font-weight: bold; border: none; cursor: pointer;">
+                        {{ request.session.web_name|first|upper }}
+                    </button>
+                    <div class="dropdown-menu" 
+                         id="profileDropdown" 
+                         style="display: none; position: absolute; right: 0; top: 50px; min-width: 180px; background-color: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;">
+                <a href="/user_profile/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-user me-2"></i>View Profile
+                        </a>
+                        <a href="/my_bookings/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-bookmark me-2"></i>View Bookings
+                        </a>
+                        <a href="/my_orders/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-shopping-bag me-2"></i>View Orders
+                        </a>
+                        <a href="/logout_web/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #dc3545; text-decoration: none;">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+                <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-flex">Sell Now</a>
+            </div>
+            {% else %}
+            <a href="/web_login/" class="btn btn-primary px-3 me-2 d-none d-lg-flex">User Login</a>
+            <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-flex">Sell Now</a>
+            {% endif %}
+        </div>
+    </nav>
+</div>
+<!-- Navbar End -->
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (profileBtn && profileDropdown) {
+            // Toggle profile dropdown
+            profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileDropdown.style.display = profileDropdown.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.style.display = 'none';
+                }
+            });
+
+            // Add hover effect on dropdown items
+            const dropdownItems = profileDropdown.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.addEventListener('mouseover', function() {
+                    this.style.backgroundColor = '#f5f5f5';
+                });
+                item.addEventListener('mouseout', function() {
+                    this.style.backgroundColor = 'white';
+                });
+            });
+        }
+    });
+</script>
