@@ -48,7 +48,7 @@ function getData() {
             for (var i = 0; i < response.length; i++) {
                 let img = response[i].pp_image.substring(3);
                 var j = i + 1;
-                $("#tableDataProducts").append('<tr><td>' + j + '</td><td style="display: none;">' + response[i].or_id + '</td><td><img class="" src="' + img + '" alt="" height="100" style="width: 50%;"></td><td>' + response[i].pp_name + '</td><td>' + response[i].pp_category + '</td><td>' + response[i].pp_price + '</td><td>' + response[i].pp_qty + '</td><td>' + response[i].pp_total_amount + '</td></tr>');
+                $("#tableDataProducts").append('<tr><td>' + j + '</td><td style="display: none;">' + response[i].or_id + '</td><td><img class="" src="' + img + '" alt="" height="100" style="width: 50%;"></td><td>' + response[i].pp_name + '</td><td>' + response[i].pp_category + '</td><td><span class="badge bg-primary">' + response[i].seller_name + '</span></td><td>' + response[i].pp_price + '</td><td>' + response[i].pp_qty + '</td><td>' + response[i].pp_total_amount + '</td></tr>');
             }
 
         },

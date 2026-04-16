@@ -1081,10 +1081,21 @@ def myOrdersAdmin(request):
     return values
 
 def viewProducts(request):
-    data = PurchasedProducts.objects.filter(pp_or_id=request.POST["orderID"]).values()
-    data = list(data)
-    values = JsonResponse(data, safe=False)
-    return values
+    try:
+        data = PurchasedProducts.objects.filter(pp_or_id=request.POST["orderID"]).values()
+        data = list(data)
+        
+        # Add seller name to each product
+        for item in data:
+            seller_info = AdminSeller.objects.filter(s_email=item["pp_created_by"]).first()
+            if seller_info:
+                item["seller_name"] = seller_info.s_name
+            else:
+                item["seller_name"] = item["pp_created_by"] # Fallback to email
+                
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 def my_bookings(request):
