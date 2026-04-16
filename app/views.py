@@ -82,6 +82,8 @@ def webLogin(request):
 
 
 def user(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/user.html")
 
 def faq(request):
@@ -95,6 +97,8 @@ def help(request):
 
 
 def adminAdmin(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/admin.html")
 
 
@@ -103,21 +107,29 @@ def openLogin(request):
 
 
 def adminProfile(request):
-    if request.session["role"] == "Admin":
+    if "email" not in request.session:
+        return redirect("/admin_login/")
+    if request.session.get("role") == "Admin":
         return render(request, "admin/profile.html")
     else:
         return render(request, "seller/profile.html")
 
 
 def adminPilot(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/pilot.html")
 
 
 def adminBooking(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/booking.html")
 
 
 def adminProperties(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/properties.html")
 
 def adminProducts(request):
@@ -126,10 +138,14 @@ def adminProducts(request):
     return render(request, "admin/products.html")
 
 def adminOrders(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/orders.html")
 
 
 def adminSeller(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return redirect("/admin_login/")
     return render(request, "admin/seller.html")
 
 
@@ -197,6 +213,9 @@ def logout(request):
 
 # AdminMaster
 def adminDetails(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
     if request.POST["action"] == "add":
         AdminMaster.objects.create(
             ad_name=request.POST["txtName"],
@@ -231,6 +250,9 @@ def adminDetails(request):
 
 
 def adminSellerDetails(request):
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
     if request.POST["action"] == "add":
         AdminSeller.objects.create(
             s_name=request.POST["txtName"],
@@ -265,19 +287,25 @@ def adminSellerDetails(request):
 #
 # seller
 def sellerPurchaser(request):
-    return render(request, "seller/seller_booking.html")
+    if "email" not in request.session or request.session.get("role") != "Seller":
+        return redirect("/admin_login/")
+    return render(request, "seller/admin.html")
 
 
 def category(request):
+    if "email" not in request.session or request.session.get("role") != "Seller":
+        return redirect("/admin_login/")
     return render(request, "seller/category.html")
 
 
 def sellerPropertiess(request):
-    return render(request, "seller/propertiess.html")
+    if "email" not in request.session or request.session.get("role") != "Seller":
+        return redirect("/admin_login/")
+    return render(request, "seller/properties.html")
 
 
 def sellerProducts(request):
-    if "email" not in request.session:
+    if "email" not in request.session or request.session.get("role") != "Seller":
         return redirect("/admin_login/")
     return render(request, "seller/seller_products.html")
 
@@ -286,7 +314,9 @@ def sellerProducts(request):
 
 
 def categoryDetails(request):
-    # pass
+    if "email" not in request.session or request.session.get("role") != "Seller":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
     if request.POST["action"] == "add":
         Category.objects.create(
             ca_name=request.POST["txtName"],
@@ -324,6 +354,9 @@ def webCategory(request):
 
 
 def sellerPropertiesDetails(request):
+    if "email" not in request.session or request.session.get("role") != "Seller":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
     if request.POST["action"] == "add":
         Properties.objects.create(
             pr_image=request.FILES["filePhoto"],
@@ -582,6 +615,9 @@ def getWebPlaces(request):
 
 
 def profileDetails(request):
+    if "email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
     if request.POST["action"] == "getData":
         if request.session["role"] == "Admin":
             data = AdminMaster.objects.filter(
@@ -773,6 +809,8 @@ def placeOrder(request):
         return HttpResponse("signin")
 
 def addToCart(request):
+    if "web_email" not in request.session:
+        return HttpResponse("signin")
 
     jsonData = Products.objects.filter(pd_id=request.POST["id"]).values()
     data = list(jsonData)
