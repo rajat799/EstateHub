@@ -285,7 +285,7 @@
             for(var i = 0; i < response.length; i++) {
              
               var j = i + 1;
-              let img = response[i].pr_image.substring(3);
+              let img = "/media/" + response[i].pr_image;
               let description = response[i].pr_desc.substr(0, 100);
               description = description+"...";
               let price = formatPrice(response[i].pr_fee);
@@ -365,7 +365,7 @@
     
             for(var i = 0; i < response.length; i++) {
               var j = i + 1;
-              let img = response[i].pr_image.substring(3);
+              let img = "/media/" + response[i].pr_image;
               let description = response[i].pr_desc.substr(0, 100);
               description = description+"...";
               let price = formatPrice(response[i].pr_fee);

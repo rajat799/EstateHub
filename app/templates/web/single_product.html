@@ -269,7 +269,7 @@
             success: function (response) {
 
                 for (let i = 0; i < response.length; i++) {
-                    let imgSub = response[i].pd_image.substring(3);
+                    let imgSub = "/media/" + response[i].pd_image;
                     $("#name").text(response[0].pd_name);
                     $("#name1").text(response[0].pd_name);
                     $("#category").text(response[0].pd_category);

@@ -62,8 +62,8 @@ class Booking(models.Model):
 
 class Properties(models.Model):
     pr_id = models.AutoField(primary_key=True, unique=True)
-    pr_image = models.ImageField(upload_to="app/static/media/property/", default="")
-    pr_image1 = models.ImageField(upload_to="app/static/media/property/", default="")
+    pr_image = models.ImageField(upload_to="property/", default="")
+    pr_image1 = models.ImageField(upload_to="property/", default="")
     pr_name = models.CharField(max_length=100, default="")
     pr_seller_name = models.CharField(max_length=100)
     pr_category = models.CharField(max_length=100, default="")
@@ -98,7 +98,7 @@ class Register(models.Model):
 
 class Products(models.Model):
     pd_id = models.AutoField(primary_key=True, unique=True)
-    pd_image = models.ImageField(upload_to="app/static/media/property/", default="")
+    pd_image = models.ImageField(upload_to="product/", default="")
     pd_name = models.CharField(max_length=100, default="")
     pd_category = models.CharField(max_length=100, default="")
     pd_price = models.CharField(max_length=100, default="")

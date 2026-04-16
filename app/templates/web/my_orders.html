@@ -503,7 +503,7 @@
                 var productsHTML = '<h6 style="color: #333; margin-bottom: 15px; font-weight: 600;"><i class="fas fa-box me-2 text-primary"></i>Order Items (' + response.length + ')</h6>';
 
                 for (var i = 0; i < response.length; i++) {
-                    var img = response[i].pp_image.substring(3);
+                    var img = "/media/" + response[i].pp_image;
                     productsHTML += '' +
                         '<div class="product-row">' +
                             '<img src="' + img + '" alt="' + response[i].pp_name + '" onerror="this.src=\'/static/web/img/property-1.jpg\'">' +
