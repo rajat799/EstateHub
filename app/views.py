@@ -462,10 +462,10 @@ def sellerProductsDetails(request):
             ).values()
             data = list(data)
             for i in range(len(data)):
-                # Filter by name AND created_by (seller) for accuracy
+                # Filter by name AND (created_by OR empty/null) for backwards compatibility
                 user_count = PurchasedProducts.objects.filter(
-                    pp_name=data[i]["pd_name"], 
-                    pp_created_by=request.session["email"]
+                    Q(pp_name=data[i]["pd_name"]),
+                    Q(pp_created_by=request.session["email"]) | Q(pp_created_by="") | Q(pp_created_by__isnull=True)
                 ).values("pp_user_email").distinct().count()
                 data[i]["user_count"] = user_count
             return JsonResponse(data, safe=False)
@@ -494,9 +494,10 @@ def sellerViewOrderDetails(request):
         seller_email = request.session["email"]
         
         # Get all purchases for this specific product and seller
+        # Include empty/null pp_created_by for backwards compatibility with old orders
         purchases = PurchasedProducts.objects.filter(
-            pp_name=product_name,
-            pp_created_by=seller_email
+            Q(pp_name=product_name),
+            Q(pp_created_by=seller_email) | Q(pp_created_by="") | Q(pp_created_by__isnull=True)
         ).values()
         
         purchase_list = list(purchases)
