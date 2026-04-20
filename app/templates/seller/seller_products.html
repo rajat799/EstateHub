@@ -433,7 +433,7 @@
                         csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val()
                     },
                     success: function(response) {
-                        alert('Product deleted successfully!');
+                        alert(response);
                         loadProducts();
                     },
                     error: function() {
