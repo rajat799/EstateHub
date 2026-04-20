@@ -480,6 +480,9 @@ def sellerProductsDetails(request):
                 pd_created_by=request.session["email"],
             )
 
+        elif request.POST["action"] == "delete":
+            Products.objects.filter(pd_id=request.POST["id"]).update(pd_status=1)
+
         return HttpResponse()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
