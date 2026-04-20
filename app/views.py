@@ -481,7 +481,11 @@ def sellerProductsDetails(request):
             )
 
         elif request.POST["action"] == "delete":
-            Products.objects.filter(pd_id=request.POST["id"]).update(pd_status=1)
+            pd_id = request.POST.get("id")
+            seller_email = request.session.get("email")
+            print(f"DEBUG: Attempting to delete product. ID: {pd_id}, Seller: {seller_email}")
+            updated_count = Products.objects.filter(pd_id=pd_id, pd_created_by=seller_email).update(pd_status=1)
+            print(f"DEBUG: Successfully updated {updated_count} rows.")
 
         return HttpResponse()
     except Exception as e:
