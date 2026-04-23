@@ -1,0 +1,613 @@
+/* =============================================
+   EstateHub - Dark Mode Stylesheet
+   Applies when <html> has class "dark-mode"
+   ============================================= */
+
+/* ---- Dark Mode Toggle Button ---- */
+.dark-mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 12px;
+    outline: none;
+}
+
+.dark-mode-toggle .toggle-track {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+    border-radius: 50px;
+    transition: background 0.35s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+    border: 1.5px solid rgba(0,0,0,0.08);
+}
+
+.dark-mode-toggle .toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.35s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #f6c90e;
+}
+
+.dark-mode-toggle .toggle-thumb::before {
+    content: "☀️";
+    font-size: 10px;
+}
+
+/* Dark state track */
+html.dark-mode .dark-mode-toggle .toggle-track {
+    background: linear-gradient(135deg, #1a1f36, #2d3358);
+    border-color: rgba(99,102,241,0.3);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 0 2px rgba(99,102,241,0.15);
+}
+
+html.dark-mode .dark-mode-toggle .toggle-thumb {
+    transform: translateX(24px);
+    background: #4f46e5;
+    box-shadow: 0 1px 4px rgba(79,70,229,0.5);
+}
+
+html.dark-mode .dark-mode-toggle .toggle-thumb::before {
+    content: "🌙";
+}
+
+/* ---- Global Dark Mode Variables ---- */
+html.dark-mode {
+    color-scheme: dark;
+}
+
+html.dark-mode body,
+html.dark-mode .container-xxl.bg-white {
+    background-color: #0f172a !important;
+    color: #cbd5e1 !important;
+}
+
+/* ---- Spinner ---- */
+html.dark-mode #spinner,
+html.dark-mode #spinner.show {
+    background: #0f172a !important;
+}
+
+/* ---- Navbar ---- */
+html.dark-mode .nav-bar.bg-transparent {
+    background: transparent !important;
+}
+
+html.dark-mode .navbar.bg-white,
+html.dark-mode .navbar.navbar-light {
+    background-color: #1e293b !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+}
+
+html.dark-mode .navbar-light .navbar-nav .nav-link {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .navbar-light .navbar-nav .nav-link:hover,
+html.dark-mode .navbar-light .navbar-nav .nav-link.active {
+    color: #00B98E !important;
+}
+
+html.dark-mode .navbar-light .navbar-brand h4 {
+    color: #00B98E !important;
+}
+
+html.dark-mode .navbar-toggler {
+    border-color: rgba(148,163,184,0.3) !important;
+}
+
+html.dark-mode .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+/* ---- Header / Hero ---- */
+html.dark-mode .header.bg-white,
+html.dark-mode .container-fluid.header.bg-white {
+    background-color: #1e293b !important;
+}
+
+/* ---- Headings & Text ---- */
+html.dark-mode h1,
+html.dark-mode h2,
+html.dark-mode h3,
+html.dark-mode h4,
+html.dark-mode h5,
+html.dark-mode h6 {
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode p {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode small {
+    color: #64748b !important;
+}
+
+html.dark-mode .text-dark {
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .text-muted {
+    color: #64748b !important;
+}
+
+/* ---- Backgrounds ---- */
+html.dark-mode .bg-white {
+    background-color: #1e293b !important;
+}
+
+html.dark-mode .bg-light {
+    background-color: #1e293b !important;
+}
+
+html.dark-mode .bg-light.rounded {
+    background-color: #1e293b !important;
+}
+
+/* ---- Category Cards ---- */
+html.dark-mode .cat-item div {
+    background: #263548 !important;
+    border-color: rgba(0, 185, 142, 0.2) !important;
+}
+
+html.dark-mode .cat-item:hover div {
+    background: #00B98E !important;
+}
+
+html.dark-mode .cat-item h6 {
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .cat-item span {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .cat-item:hover h6,
+html.dark-mode .cat-item:hover span {
+    color: #ffffff !important;
+}
+
+/* ---- Property Items / Product Cards ---- */
+html.dark-mode .property-item {
+    background-color: #1e293b !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35) !important;
+    border-color: rgba(51,65,85,0.5) !important;
+}
+
+html.dark-mode .property-item a.d-block.h5 {
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .property-item p {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .property-item span {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .property-item .border-top {
+    border-top: 1px dashed rgba(0, 185, 142, 0.2) !important;
+}
+
+html.dark-mode .property-item .border-end {
+    border-right: 1px dashed rgba(0, 185, 142, 0.2) !important;
+}
+
+/* ---- Call to Action Box ---- */
+html.dark-mode .bg-light.rounded.p-3 {
+    background-color: #1e293b !important;
+}
+
+html.dark-mode .bg-white.rounded.p-4 {
+    background-color: #263548 !important;
+    border-color: rgba(0, 185, 142, 0.15) !important;
+}
+
+/* ---- Testimonials ---- */
+html.dark-mode .testimonial-item.bg-light {
+    background-color: #1e293b !important;
+}
+
+html.dark-mode .testimonial-item .bg-white.border {
+    background-color: #263548 !important;
+    border-color: rgba(0, 185, 142, 0.15) !important;
+}
+
+html.dark-mode .testimonial-item p {
+    color: #94a3b8 !important;
+}
+
+/* ---- Team Items ---- */
+html.dark-mode .team-item {
+    background-color: #1e293b !important;
+    border-color: rgba(51,65,85,0.5) !important;
+}
+
+html.dark-mode .team-item h5 {
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .team-item small {
+    color: #64748b !important;
+}
+
+html.dark-mode .team-item .btn {
+    background: #263548 !important;
+    color: #00B98E !important;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3) !important;
+}
+
+/* ---- Icon ---- */
+html.dark-mode .icon {
+    background: #263548 !important;
+    border-color: rgba(0, 185, 142, 0.3) !important;
+}
+
+/* ---- Breadcrumb ---- */
+html.dark-mode .breadcrumb-item {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .breadcrumb-item a {
+    color: #00B98E !important;
+}
+
+/* ---- Forms & Inputs ---- */
+html.dark-mode .form-control,
+html.dark-mode .form-select {
+    background-color: #263548 !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .form-control:focus,
+html.dark-mode .form-select:focus {
+    background-color: #2d3f55 !important;
+    border-color: #00B98E !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 185, 142, 0.15) !important;
+}
+
+html.dark-mode .form-control::placeholder {
+    color: #4a5568 !important;
+}
+
+html.dark-mode input[type="text"],
+html.dark-mode input[type="email"],
+html.dark-mode input[type="password"],
+html.dark-mode input[type="number"],
+html.dark-mode input[type="tel"],
+html.dark-mode textarea,
+html.dark-mode select {
+    background-color: #263548 !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode label {
+    color: #94a3b8 !important;
+}
+
+/* ---- Cards ---- */
+html.dark-mode .card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .card-header {
+    background-color: #263548 !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.dark-mode .card-body {
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .card-title {
+    color: #f1f5f9 !important;
+}
+
+/* ---- Tables ---- */
+html.dark-mode table,
+html.dark-mode .table {
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+html.dark-mode .table thead th {
+    background-color: #263548 !important;
+    color: #e2e8f0 !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.dark-mode .table tbody tr {
+    background-color: #1e293b !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.dark-mode .table tbody tr:hover {
+    background-color: #263548 !important;
+}
+
+html.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #263548 !important;
+}
+
+html.dark-mode .table-bordered {
+    border-color: #334155 !important;
+}
+
+/* ---- Modals ---- */
+html.dark-mode .modal-content {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .modal-header {
+    background-color: #263548 !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.dark-mode .modal-title {
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode .modal-footer {
+    border-top-color: #334155 !important;
+    background-color: #1e293b !important;
+}
+
+html.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ---- Alerts ---- */
+html.dark-mode .alert {
+    border-color: #334155 !important;
+}
+
+html.dark-mode .alert-success {
+    background-color: #064e3b !important;
+    color: #6ee7b7 !important;
+    border-color: #065f46 !important;
+}
+
+html.dark-mode .alert-danger {
+    background-color: #7f1d1d !important;
+    color: #fca5a5 !important;
+    border-color: #991b1b !important;
+}
+
+html.dark-mode .alert-warning {
+    background-color: #78350f !important;
+    color: #fcd34d !important;
+    border-color: #92400e !important;
+}
+
+html.dark-mode .alert-info {
+    background-color: #0c4a6e !important;
+    color: #7dd3fc !important;
+    border-color: #075985 !important;
+}
+
+/* ---- Badges ---- */
+html.dark-mode .badge.bg-light {
+    background-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+/* ---- Borders ---- */
+html.dark-mode .border {
+    border-color: #334155 !important;
+}
+
+html.dark-mode .border-top {
+    border-top-color: #334155 !important;
+}
+
+html.dark-mode .border-bottom {
+    border-bottom-color: #334155 !important;
+}
+
+/* ---- Nav Tabs / Pills ---- */
+html.dark-mode .nav-pills .nav-item .btn {
+    color: #94a3b8 !important;
+    background-color: #263548 !important;
+    border-color: #334155 !important;
+}
+
+html.dark-mode .nav-pills .nav-item .btn:hover,
+html.dark-mode .nav-pills .nav-item .btn.active {
+    color: #ffffff !important;
+    background-color: #00B98E !important;
+    border-color: #00B98E !important;
+}
+
+/* ---- Dropdown ---- */
+html.dark-mode .dropdown-menu,
+html.dark-mode #profileDropdown {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4) !important;
+}
+
+html.dark-mode .dropdown-item,
+html.dark-mode #profileDropdown a {
+    color: #94a3b8 !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.dark-mode .dropdown-item:hover,
+html.dark-mode #profileDropdown a:hover {
+    background-color: #263548 !important;
+    color: #e2e8f0 !important;
+}
+
+/* ---- Containers for pages ---- */
+html.dark-mode .container-xxl.py-5,
+html.dark-mode .container-xxl {
+    background-color: #0f172a !important;
+}
+
+/* ---- Single Property / Single Product ---- */
+html.dark-mode .p-4,
+html.dark-mode .pb-0 {
+    color: #cbd5e1 !important;
+}
+
+/* ---- About Page ---- */
+html.dark-mode .about-img::before {
+    background: #00B98E !important;
+    opacity: 0.7;
+}
+
+/* ---- Contact / FAQ / Help sections ---- */
+html.dark-mode .accordion-item {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html.dark-mode .accordion-button {
+    background-color: #263548 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .accordion-button:not(.collapsed) {
+    background-color: #00B98E !important;
+    color: white !important;
+}
+
+html.dark-mode .accordion-button::after {
+    filter: invert(1);
+}
+
+html.dark-mode .accordion-body {
+    background-color: #1e293b !important;
+    color: #94a3b8 !important;
+}
+
+/* ---- User Profile / Booking / Orders ---- */
+html.dark-mode .profile-section,
+html.dark-mode .booking-section,
+html.dark-mode .orders-section {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+}
+
+/* ---- List Groups ---- */
+html.dark-mode .list-group-item {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .list-group-item:hover {
+    background-color: #263548 !important;
+}
+
+/* ---- Images in dark mode: subtle overlay ---- */
+html.dark-mode .bg-light img {
+    opacity: 0.92;
+}
+
+/* ---- Scrollbar ---- */
+html.dark-mode ::-webkit-scrollbar {
+    width: 8px;
+    background-color: #0f172a;
+}
+
+html.dark-mode ::-webkit-scrollbar-thumb {
+    background-color: #334155;
+    border-radius: 4px;
+}
+
+html.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background-color: #475569;
+}
+
+/* ---- Footer (mostly dark already, tweak for dark mode) ---- */
+html.dark-mode .footer.bg-dark {
+    background-color: #0a0f1e !important;
+}
+
+html.dark-mode .footer .copyright {
+    border-top-color: rgba(255,255,255,0.05) !important;
+}
+
+/* ---- Web Login / Register Pages ---- */
+html.dark-mode .card.shadow {
+    background-color: #1e293b !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important;
+}
+
+/* ---- Seller Profile ---- */
+html.dark-mode .seller-card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+/* ---- Pagination ---- */
+html.dark-mode .page-item .page-link {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .page-item.active .page-link {
+    background-color: #00B98E !important;
+    border-color: #00B98E !important;
+    color: white !important;
+}
+
+html.dark-mode .page-item.disabled .page-link {
+    background-color: #263548 !important;
+    color: #4a5568 !important;
+}
+
+/* ---- Spinner (Loading) ---- */
+html.dark-mode .spinner-border.text-primary {
+    color: #00B98E !important;
+}
+
+/* ---- Back to Top ---- */
+html.dark-mode .back-to-top {
+    background-color: #00B98E !important;
+    border-color: #00B98E !important;
+}
+
+/* ---- Search bar ---- */
+html.dark-mode .container-fluid.bg-primary {
+    /* Keep the primary color but add slight dark tint */
+    background: linear-gradient(135deg, #00a07c, #008c6e) !important;
+}
+
+/* ---- Transition for smooth dark-mode switch ---- */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* Reset transitions for things that shouldn't animate */
+html.dark-mode .owl-carousel * {
+    transition: none !important;
+}

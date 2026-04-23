@@ -30,6 +30,10 @@
  
      <!-- Template Stylesheet -->
      <link href="/static/web/css/style.css" rel="stylesheet">
+     <!-- Dark Mode CSS -->
+     <link href="/static/web/css/darkmode.css" rel="stylesheet">
+     <!-- Dark Mode JS -->
+     <script src="/static/web/js/darkmode.js"></script>
 
      <style type="text/css">
          body {
@@ -109,6 +113,12 @@
 
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <!-- Dark Mode Toggle (floating) -->
+        <div style="position: fixed; bottom: 100px; right: 45px; z-index: 9999;">
+            <button class="dark-mode-toggle" id="darkModeToggle" type="button" title="Toggle Dark Mode" aria-label="Toggle Dark Mode" aria-pressed="false">
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            </button>
+        </div>
     </div>
 
     <!-- JavaScript Libraries -->

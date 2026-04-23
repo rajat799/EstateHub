@@ -16,12 +16,52 @@
     <link rel="icon" type="/static/admin/image/png" sizes="16x16" href="/static/admin/plugins/images/favicon.png">
     <!-- Custom CSS -->
    <link href="/static/admin/css/style.min.css" rel="stylesheet">
+   <!-- Dark Mode CSS -->
+   <link href="/static/web/css/darkmode.css" rel="stylesheet">
+   <!-- Dark Mode JS - loaded early to prevent flash -->
+   <script src="/static/web/js/darkmode.js"></script>
    <style type="text/css">
        .logo-text {
             color: black !important;
             font-weight: 900 !important;
             margin: auto;
         }
+       /* Admin/Seller dark mode extras */
+       html.dark-mode #main-wrapper,
+       html.dark-mode .page-wrapper {
+           background-color: #0f172a !important;
+       }
+       html.dark-mode .left-sidebar,
+       html.dark-mode .scroll-sidebar {
+           background-color: #1e293b !important;
+       }
+       html.dark-mode .sidebar-nav ul,
+       html.dark-mode .sidebar-nav li a,
+       html.dark-mode .sidebar-link {
+           background-color: #1e293b !important;
+           color: #94a3b8 !important;
+       }
+       html.dark-mode .sidebar-link:hover,
+       html.dark-mode .sidebar-link.active {
+           background-color: #263548 !important;
+           color: #00B98E !important;
+       }
+       html.dark-mode .sidebar-link .hide-menu { color: inherit !important; }
+       html.dark-mode .topbar { background-color: #1e293b !important; }
+       html.dark-mode .page-breadcrumb.bg-white {
+           background-color: #1e293b !important;
+           border-bottom: 1px solid #334155 !important;
+       }
+       html.dark-mode .white-box {
+           background-color: #1e293b !important;
+           box-shadow: 0 4px 20px rgba(0,0,0,0.35) !important;
+       }
+       html.dark-mode footer.footer {
+           background-color: #1e293b !important;
+           color: #94a3b8 !important;
+           border-top: 1px solid #334155 !important;
+       }
+       html.dark-mode .preloader { background-color: #0f172a !important; }
    </style>
 </head>
 
