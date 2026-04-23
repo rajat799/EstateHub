@@ -1,9 +1,6 @@
-<!-- Dark Mode CSS -->
-<link href="/static/web/css/darkmode.css" rel="stylesheet">
-
-<!-- Inline dark-mode toggle styles so button always renders correctly even if darkmode.css fails -->
+<!-- Inline dark mode CSS - no external file needed -->
 <style>
-/* ----  Dark Mode Toggle ---- */
+/* ===== Dark Mode Toggle Button ===== */
 .dm-toggle-btn {
     display: inline-flex;
     align-items: center;
@@ -17,27 +14,284 @@
     font-size: 20px;
     transition: all 0.3s ease;
     outline: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    margin: 0 8px;
     padding: 0;
     line-height: 1;
+    margin: 0 8px;
 }
 .dm-toggle-btn:hover {
     border-color: #00B98E;
     background: #e8fdf7;
     transform: scale(1.1);
-    box-shadow: 0 4px 16px rgba(0,185,142,0.2);
 }
 html.dark-mode .dm-toggle-btn {
     background: #1e293b;
-    border-color: #4f46e5;
-    box-shadow: 0 2px 8px rgba(79,70,229,0.3);
-}
-html.dark-mode .dm-toggle-btn:hover {
-    background: #263548;
     border-color: #6366f1;
-    box-shadow: 0 4px 16px rgba(99,102,241,0.3);
 }
+
+/* ===== DARK MODE - Full Page Styles ===== */
+html.dark-mode body,
+html.dark-mode .container-xxl.bg-white,
+html.dark-mode .container-xxl {
+    background-color: #0f172a !important;
+    color: #cbd5e1 !important;
+}
+html.dark-mode #spinner,
+html.dark-mode #spinner.show {
+    background: #0f172a !important;
+}
+/* Navbar */
+html.dark-mode .navbar.bg-white,
+html.dark-mode .navbar.navbar-light {
+    background-color: #1e293b !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+}
+html.dark-mode .navbar-light .navbar-nav .nav-link {
+    color: #94a3b8 !important;
+}
+html.dark-mode .navbar-light .navbar-nav .nav-link:hover,
+html.dark-mode .navbar-light .navbar-nav .nav-link.active {
+    color: #00B98E !important;
+}
+html.dark-mode .navbar-light .navbar-brand h4 {
+    color: #00B98E !important;
+}
+html.dark-mode .navbar-toggler-icon { filter: invert(1); }
+
+/* Header hero */
+html.dark-mode .header.bg-white,
+html.dark-mode .container-fluid.header.bg-white {
+    background-color: #1e293b !important;
+}
+
+/* Headings & text */
+html.dark-mode h1, html.dark-mode h2, html.dark-mode h3,
+html.dark-mode h4, html.dark-mode h5, html.dark-mode h6 {
+    color: #f1f5f9 !important;
+}
+html.dark-mode p    { color: #94a3b8 !important; }
+html.dark-mode small { color: #64748b !important; }
+html.dark-mode .text-dark { color: #e2e8f0 !important; }
+html.dark-mode .text-muted { color: #64748b !important; }
+
+/* Backgrounds */
+html.dark-mode .bg-white { background-color: #1e293b !important; }
+html.dark-mode .bg-light  { background-color: #1e293b !important; }
+
+/* Category cards */
+html.dark-mode .cat-item div {
+    background: #263548 !important;
+    border-color: rgba(0,185,142,.2) !important;
+}
+html.dark-mode .cat-item:hover div { background: #00B98E !important; }
+html.dark-mode .cat-item h6 { color: #e2e8f0 !important; }
+html.dark-mode .cat-item span { color: #94a3b8 !important; }
+html.dark-mode .cat-item:hover h6,
+html.dark-mode .cat-item:hover span { color: #fff !important; }
+
+/* Property / Product cards */
+html.dark-mode .property-item {
+    background-color: #1e293b !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,.35) !important;
+}
+html.dark-mode .property-item a.d-block.h5 { color: #e2e8f0 !important; }
+html.dark-mode .property-item p    { color: #94a3b8 !important; }
+html.dark-mode .property-item span { color: #94a3b8 !important; }
+html.dark-mode .property-item .border-top {
+    border-top: 1px dashed rgba(0,185,142,.2) !important;
+}
+html.dark-mode .property-item .border-end {
+    border-right: 1px dashed rgba(0,185,142,.2) !important;
+}
+
+/* Call-to-action box */
+html.dark-mode .bg-light.rounded.p-3 { background-color: #1e293b !important; }
+html.dark-mode .bg-white.rounded.p-4 {
+    background-color: #263548 !important;
+    border-color: rgba(0,185,142,.15) !important;
+}
+
+/* Testimonials */
+html.dark-mode .testimonial-item.bg-light { background-color: #1e293b !important; }
+html.dark-mode .testimonial-item .bg-white.border {
+    background-color: #263548 !important;
+    border-color: rgba(0,185,142,.15) !important;
+}
+html.dark-mode .testimonial-item p { color: #94a3b8 !important; }
+
+/* Team */
+html.dark-mode .team-item {
+    background-color: #1e293b !important;
+    border-color: rgba(51,65,85,.5) !important;
+}
+html.dark-mode .team-item h5  { color: #e2e8f0 !important; }
+html.dark-mode .team-item small { color: #64748b !important; }
+html.dark-mode .team-item .btn {
+    background: #263548 !important;
+    color: #00B98E !important;
+}
+
+/* Icon */
+html.dark-mode .icon {
+    background: #263548 !important;
+    border-color: rgba(0,185,142,.3) !important;
+}
+
+/* Forms */
+html.dark-mode .form-control,
+html.dark-mode .form-select,
+html.dark-mode input[type="text"],
+html.dark-mode input[type="email"],
+html.dark-mode input[type="password"],
+html.dark-mode input[type="number"],
+html.dark-mode textarea, html.dark-mode select {
+    background-color: #263548 !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+html.dark-mode .form-control:focus,
+html.dark-mode .form-select:focus {
+    background-color: #2d3f55 !important;
+    border-color: #00B98E !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 0 0 .25rem rgba(0,185,142,.15) !important;
+}
+html.dark-mode .form-control::placeholder { color: #4a5568 !important; }
+html.dark-mode label { color: #94a3b8 !important; }
+
+/* Cards */
+html.dark-mode .card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+html.dark-mode .card-header {
+    background-color: #263548 !important;
+    border-bottom-color: #334155 !important;
+}
+html.dark-mode .card-title { color: #f1f5f9 !important; }
+
+/* Tables */
+html.dark-mode table, html.dark-mode .table { color: #cbd5e1 !important; border-color: #334155 !important; }
+html.dark-mode .table thead th {
+    background-color: #263548 !important;
+    color: #e2e8f0 !important;
+    border-bottom-color: #334155 !important;
+}
+html.dark-mode .table tbody tr {
+    background-color: #1e293b !important;
+    border-bottom-color: #334155 !important;
+}
+html.dark-mode .table tbody tr:hover { background-color: #263548 !important; }
+html.dark-mode .table-striped tbody tr:nth-of-type(odd) { background-color: #263548 !important; }
+
+/* Modals */
+html.dark-mode .modal-content {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+html.dark-mode .modal-header {
+    background-color: #263548 !important;
+    border-bottom-color: #334155 !important;
+}
+html.dark-mode .modal-title { color: #f1f5f9 !important; }
+html.dark-mode .modal-footer {
+    border-top-color: #334155 !important;
+    background-color: #1e293b !important;
+}
+html.dark-mode .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+
+/* Dropdown */
+html.dark-mode .dropdown-menu,
+html.dark-mode #profileDropdown {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,.4) !important;
+}
+html.dark-mode .dropdown-item,
+html.dark-mode #profileDropdown a {
+    color: #94a3b8 !important;
+    border-bottom-color: #334155 !important;
+}
+html.dark-mode .dropdown-item:hover,
+html.dark-mode #profileDropdown a:hover {
+    background-color: #263548 !important;
+    color: #e2e8f0 !important;
+}
+
+/* Nav pills */
+html.dark-mode .nav-pills .nav-item .btn {
+    color: #94a3b8 !important;
+    background-color: #263548 !important;
+    border-color: #334155 !important;
+}
+html.dark-mode .nav-pills .nav-item .btn:hover,
+html.dark-mode .nav-pills .nav-item .btn.active {
+    color: #fff !important;
+    background-color: #00B98E !important;
+    border-color: #00B98E !important;
+}
+
+/* Breadcrumb */
+html.dark-mode .breadcrumb-item { color: #94a3b8 !important; }
+html.dark-mode .breadcrumb-item a { color: #00B98E !important; }
+
+/* Borders */
+html.dark-mode .border        { border-color: #334155 !important; }
+html.dark-mode .border-top    { border-top-color: #334155 !important; }
+html.dark-mode .border-bottom { border-bottom-color: #334155 !important; }
+
+/* Alerts */
+html.dark-mode .alert-success { background-color:#064e3b !important; color:#6ee7b7 !important; border-color:#065f46 !important; }
+html.dark-mode .alert-danger  { background-color:#7f1d1d !important; color:#fca5a5 !important; border-color:#991b1b !important; }
+html.dark-mode .alert-warning { background-color:#78350f !important; color:#fcd34d !important; border-color:#92400e !important; }
+html.dark-mode .alert-info    { background-color:#0c4a6e !important; color:#7dd3fc !important; border-color:#075985 !important; }
+
+/* List group */
+html.dark-mode .list-group-item {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+/* Accordion */
+html.dark-mode .accordion-item { background-color: #1e293b !important; border-color: #334155 !important; }
+html.dark-mode .accordion-button { background-color: #263548 !important; color: #e2e8f0 !important; }
+html.dark-mode .accordion-button:not(.collapsed) { background-color: #00B98E !important; color: white !important; }
+html.dark-mode .accordion-button::after { filter: invert(1); }
+html.dark-mode .accordion-body { background-color: #1e293b !important; color: #94a3b8 !important; }
+
+/* Pagination */
+html.dark-mode .page-item .page-link {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+html.dark-mode .page-item.active .page-link {
+    background-color: #00B98E !important;
+    border-color: #00B98E !important;
+    color: white !important;
+}
+
+/* Footer */
+html.dark-mode .footer.bg-dark { background-color: #0a0f1e !important; }
+html.dark-mode .footer .copyright { border-top-color: rgba(255,255,255,.05) !important; }
+
+/* Search bar */
+html.dark-mode .container-fluid.bg-primary {
+    background: linear-gradient(135deg,#00a07c,#008c6e) !important;
+}
+
+/* Scrollbar */
+html.dark-mode ::-webkit-scrollbar        { width: 8px; background-color: #0f172a; }
+html.dark-mode ::-webkit-scrollbar-thumb  { background-color: #334155; border-radius: 4px; }
+
+/* Smooth transition for everything */
+*, *::before, *::after {
+    transition: background-color 0.3s ease, color 0.2s ease,
+                border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+html.dark-mode .owl-carousel * { transition: none !important; }
 </style>
 
 <!-- Navbar Start -->
@@ -60,7 +314,7 @@ html.dark-mode .dm-toggle-btn:hover {
                 <a href="/cart/" class="nav-item nav-link"><i class="fas fa-shopping-cart"></i></a>
             </div>
 
-            <!-- ☀️🌙 Dark Mode Toggle Button -->
+            <!-- ☀️🌙 Dark Mode Toggle -->
             <button
                 class="dm-toggle-btn"
                 id="darkModeToggle"
@@ -72,34 +326,24 @@ html.dark-mode .dm-toggle-btn:hover {
 
             {% if request.session.web_email %}
             <div class="d-flex align-items-center gap-3">
-                <!-- Profile Circle Dropdown -->
                 <div class="position-relative">
                     <button class="btn p-0 d-flex align-items-center justify-content-center rounded-circle"
                             id="profileBtn"
-                            style="width: 40px; height: 40px; background-color: #007bff; color: white; font-weight: bold; border: none; cursor: pointer;">
+                            style="width:40px;height:40px;background-color:#007bff;color:white;font-weight:bold;border:none;cursor:pointer;">
                         {{ request.session.web_name|first|upper }}
                     </button>
-                    <div class="dropdown-menu"
-                         id="profileDropdown"
-                         style="display: none; position: absolute; right: 0; top: 50px; min-width: 180px; background-color: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;">
-                        <a href="/user_profile/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-                            <i class="fas fa-user me-2"></i>View Profile
-                        </a>
-                        <a href="/my_bookings/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-                            <i class="fas fa-bookmark me-2"></i>View Bookings
-                        </a>
-                        <a href="/my_orders/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #333; text-decoration: none; border-bottom: 1px solid #eee;">
-                            <i class="fas fa-shopping-bag me-2"></i>View Orders
-                        </a>
-                        <a href="/logout_web/" class="dropdown-item" style="padding: 10px 15px; display: block; color: #dc3545; text-decoration: none;">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a>
+                    <div id="profileDropdown"
+                         style="display:none;position:absolute;right:0;top:50px;min-width:180px;background-color:white;border:1px solid #ddd;border-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:1000;">
+                        <a href="/user_profile/"  style="padding:10px 15px;display:block;color:#333;text-decoration:none;border-bottom:1px solid #eee;"><i class="fas fa-user me-2"></i>View Profile</a>
+                        <a href="/my_bookings/"  style="padding:10px 15px;display:block;color:#333;text-decoration:none;border-bottom:1px solid #eee;"><i class="fas fa-bookmark me-2"></i>View Bookings</a>
+                        <a href="/my_orders/"    style="padding:10px 15px;display:block;color:#333;text-decoration:none;border-bottom:1px solid #eee;"><i class="fas fa-shopping-bag me-2"></i>View Orders</a>
+                        <a href="/logout_web/"   style="padding:10px 15px;display:block;color:#dc3545;text-decoration:none;"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
                     </div>
                 </div>
                 <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-flex">Sell Now</a>
             </div>
             {% else %}
-            <a href="/web_login/" class="btn btn-primary px-3 me-2 d-none d-lg-flex">User Login</a>
+            <a href="/web_login/"   class="btn btn-primary px-3 me-2 d-none d-lg-flex">User Login</a>
             <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-flex">Sell Now</a>
             {% endif %}
         </div>
@@ -107,62 +351,50 @@ html.dark-mode .dm-toggle-btn:hover {
 </div>
 <!-- Navbar End -->
 
-<script type="text/javascript">
+<script>
 (function () {
     var STORAGE_KEY = 'estatehub_dark_mode';
     var DARK_CLASS  = 'dark-mode';
 
-    // ---- Apply saved theme immediately (no flash) ----
-    function applyTheme() {
-        if (localStorage.getItem(STORAGE_KEY) === 'true') {
-            document.documentElement.classList.add(DARK_CLASS);
-        }
+    /* Apply saved theme immediately - no flash */
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+        document.documentElement.classList.add(DARK_CLASS);
     }
-    applyTheme();
 
-    // ---- Update button icon ----
     function updateIcon() {
         var btn = document.getElementById('darkModeToggle');
         if (!btn) return;
         var isDark = document.documentElement.classList.contains(DARK_CLASS);
         btn.innerHTML = isDark ? '🌙' : '☀️';
-        btn.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        btn.title     = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     }
 
-    // ---- Toggle ----
     function toggleDark() {
         var isDark = document.documentElement.classList.toggle(DARK_CLASS);
         localStorage.setItem(STORAGE_KEY, isDark ? 'true' : 'false');
         updateIcon();
     }
 
-    // ---- Wire up button after DOM is ready ----
     document.addEventListener('DOMContentLoaded', function () {
         updateIcon();
-
         var btn = document.getElementById('darkModeToggle');
-        if (btn) {
-            btn.addEventListener('click', toggleDark);
-        }
+        if (btn) btn.addEventListener('click', toggleDark);
 
-        // ---- Profile dropdown ----
+        /* Profile dropdown */
         var profileBtn      = document.getElementById('profileBtn');
         var profileDropdown = document.getElementById('profileDropdown');
-
         if (profileBtn && profileDropdown) {
             profileBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 profileDropdown.style.display =
                     profileDropdown.style.display === 'none' ? 'block' : 'none';
             });
-
             document.addEventListener('click', function (e) {
                 if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
                     profileDropdown.style.display = 'none';
                 }
             });
-
-            profileDropdown.querySelectorAll('.dropdown-item').forEach(function (item) {
+            profileDropdown.querySelectorAll('a').forEach(function (item) {
                 item.addEventListener('mouseover', function () {
                     this.style.backgroundColor = document.documentElement.classList.contains(DARK_CLASS)
                         ? '#263548' : '#f5f5f5';
@@ -175,7 +407,6 @@ html.dark-mode .dm-toggle-btn:hover {
         }
     });
 
-    // Expose globally for pages that may need it
     window.toggleDarkMode = toggleDark;
 })();
 </script>
