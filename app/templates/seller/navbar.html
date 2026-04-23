@@ -1,5 +1,32 @@
 <!-- Topbar header - style you can find in pages.scss -->
 <!-- ============================================================== -->
+<style>
+.dm-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    outline: none;
+    padding: 0;
+    line-height: 1;
+}
+.dm-toggle-btn:hover {
+    border-color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.25);
+    transform: scale(1.1);
+}
+html.dark-mode .dm-toggle-btn {
+    border-color: rgba(99,102,241,0.6);
+    background: rgba(79,70,229,0.2);
+}
+</style>
 <header class="topbar" data-navbarbg="skin5">
     <nav class="navbar top-navbar navbar-expand-md navbar-dark">
         <div class="navbar-header" data-logobg="skin6">
@@ -43,17 +70,14 @@
                     </a>
                 </li>
                 <li class="me-3">
-                    <!-- Dark Mode Toggle -->
+                    <!-- ☀️🌙 Dark Mode Toggle -->
                     <button
-                        class="dark-mode-toggle"
+                        class="dm-toggle-btn"
                         id="darkModeToggle"
-                        title="Toggle Dark Mode"
-                        aria-label="Toggle Dark Mode"
-                        aria-pressed="false"
-                        type="button">
-                        <span class="toggle-track">
-                            <span class="toggle-thumb"></span>
-                        </span>
+                        type="button"
+                        title="Switch to Dark Mode"
+                        aria-label="Toggle Dark Mode">
+                        ☀️
                     </button>
                 </li>
                 <li>
@@ -68,3 +92,37 @@
 <!-- ============================================================== -->
 <!-- End Topbar header -->
 <!-- ============================================================== -->
+
+<script>
+(function () {
+    var STORAGE_KEY = 'estatehub_dark_mode';
+    var DARK_CLASS  = 'dark-mode';
+
+    // Apply saved theme right away
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+        document.documentElement.classList.add(DARK_CLASS);
+    }
+
+    function updateIcon() {
+        var btn = document.getElementById('darkModeToggle');
+        if (!btn) return;
+        var isDark = document.documentElement.classList.contains(DARK_CLASS);
+        btn.innerHTML = isDark ? '🌙' : '☀️';
+        btn.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+    }
+
+    function toggleDark() {
+        var isDark = document.documentElement.classList.toggle(DARK_CLASS);
+        localStorage.setItem(STORAGE_KEY, isDark ? 'true' : 'false');
+        updateIcon();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateIcon();
+        var btn = document.getElementById('darkModeToggle');
+        if (btn) btn.addEventListener('click', toggleDark);
+    });
+
+    window.toggleDarkMode = toggleDark;
+})();
+</script>
