@@ -1135,38 +1135,10 @@ def removeCart(request):
 
 
 def userDetails(request):
-    # Get all registered users
-    registered_data = Register.objects.filter(us_status=0).values()
-    registered_list = list(registered_data)
-    
-    # Track existing name+email pairs to avoid duplicates
-    existing_pairs = set(
-        (item['us_name'].strip().lower(), item['us_email'].strip().lower())
-        for item in registered_list
-    )
-    
-    # Get unique users from Order table who are NOT already shown
-    order_users = Order.objects.values('or_name', 'or_email', 'or_mobile').distinct()
-    
-    for order_user in order_users:
-        name = (order_user['or_name'] or '').strip()
-        email = (order_user['or_email'] or '').strip()
-        if not name or not email:
-            continue
-        pair = (name.lower(), email.lower())
-        if pair not in existing_pairs:
-            registered_list.append({
-                'us_id': None,
-                'us_name': name,
-                'us_email': email,
-                'us_mobile': order_user['or_mobile'] or '',
-                'us_password': '',
-                'us_status': 0,
-                'us_created_by': 'order',
-            })
-            existing_pairs.add(pair)
-    
-    return JsonResponse(registered_list, safe=False)
+    data = Register.objects.filter().values()
+    data = list(data)
+    values = JsonResponse(data, safe=False)
+    return values
 
 
 # ============= WEB-BASED SELLER PROFILE =============
