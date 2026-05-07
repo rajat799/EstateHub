@@ -126,6 +126,8 @@
 
     <!-- Template Javascript -->
     <script src="/static/web/js/main.js"></script>
+    <!-- SECURITY: CSRF helper for AJAX -->
+    <script src="/static/web/js/csrf_helper.js"></script>
 </body>
 
 </html>
@@ -199,13 +201,28 @@
                 return false;
             }
 
-            // pass = document.getElementById("txtPassword").value;
-            // console.log(pass);
-            // regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            // if (regex.exec(pass) == null) {
-            //  alert('Please Enter Valid Password Format');
-            //   return false;
-            // }
+            // SECURITY: Password strength validation
+            var pass = $("#txtPassword").val();
+            if (pass.length < 8) {
+                alert('Password must be at least 8 characters long');
+                $("#txtPassword").focus();
+                return false;
+            }
+            if (!/[A-Z]/.test(pass)) {
+                alert('Password must contain at least 1 uppercase letter');
+                $("#txtPassword").focus();
+                return false;
+            }
+            if (!/[a-z]/.test(pass)) {
+                alert('Password must contain at least 1 lowercase letter');
+                $("#txtPassword").focus();
+                return false;
+            }
+            if (!/[0-9]/.test(pass)) {
+                alert('Password must contain at least 1 number');
+                $("#txtPassword").focus();
+                return false;
+            }
 
             // alert("alert");
             var formData = new FormData();

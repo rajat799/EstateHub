@@ -11,23 +11,38 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-import os
 
+# =============================================================================
+# SECURITY: SECRET KEY
+# =============================================================================
+# Read from environment variable in production.
+# Fallback is ONLY for local development — NEVER use the fallback in production.
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "xc@j_in54!hrh(o3lchh$s1jmyado3pk31c3kbodtdcz0@aa4r"  # Dev fallback only
+)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+# =============================================================================
+# SECURITY: DEBUG MODE
+# =============================================================================
+# DEBUG=False by default (production-safe).
+# Set DJANGO_DEBUG=True in your local environment for development.
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "xc@j_in54!hrh(o3lchh$s1jmyado3pk31c3kbodtdcz0@aa4r"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com']
+# =============================================================================
+# ALLOWED HOSTS
+# =============================================================================
+ALLOWED_HOSTS = [
+    "estatehub.pythonanywhere.com",  # Production
+    ".pythonanywhere.com",            # Any PA subdomain (future-proof)
+    "localhost",                      # Local development
+    "127.0.0.1",                      # Local development
+]
 
 
 # Application definition
@@ -148,3 +163,51 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = ""  # your email id
 EMAIL_HOST_PASSWORD = ""  # password
+
+
+# =============================================================================
+# DEFAULT AUTO FIELD (suppresses Django 3.2+ warnings)
+# =============================================================================
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# =============================================================================
+# SECURITY HEADERS — Production hardening
+# =============================================================================
+# Prevent the browser from MIME-sniffing a response away from the declared type
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable the browser's XSS filter (legacy but still useful)
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent this site from being embedded in iframes (clickjacking protection)
+X_FRAME_OPTIONS = "DENY"
+
+# Session security
+SESSION_COOKIE_HTTPONLY = True     # JS cannot access session cookie
+SESSION_COOKIE_AGE = 3600         # Session expires after 1 hour (seconds)
+SESSION_SAVE_EVERY_REQUEST = True  # Reset expiry timer on each request
+
+# =============================================================================
+# PRODUCTION-ONLY SECURITY (only active when DEBUG=False)
+# =============================================================================
+if not DEBUG:
+    # Only send cookies over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Redirect HTTP to HTTPS (PythonAnywhere handles this, but belt-and-suspenders)
+    SECURE_SSL_REDIRECT = False  # PA handles SSL termination; set True if you want Django to enforce
+
+    # HSTS: tell browsers to always use HTTPS for this site
+    SECURE_HSTS_SECONDS = 31536000        # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+
+# =============================================================================
+# LOGIN RATE LIMITING CONFIGURATION
+# =============================================================================
+# Session-based brute-force protection (no extra dependencies needed)
+LOGIN_MAX_ATTEMPTS = 5          # Max failed login attempts before lockout
+LOGIN_LOCKOUT_DURATION = 1800   # Lockout duration in seconds (30 minutes)

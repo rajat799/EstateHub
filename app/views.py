@@ -17,6 +17,132 @@ from datetime import date
 from django.db.models import Q
 from datetime import date, timedelta
 
+# =============================================================================
+# SECURITY IMPORTS
+# =============================================================================
+import re
+import os
+import time
+import mimetypes
+from django.contrib.auth.hashers import make_password, check_password
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
+
+# =============================================================================
+# SECURITY HELPERS
+# =============================================================================
+
+def validate_password_strength(password):
+    """
+    Validate password meets security requirements:
+    - Minimum 8 characters
+    - At least 1 uppercase letter
+    - At least 1 lowercase letter
+    - At least 1 digit
+    Returns (is_valid, error_message)
+    """
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long"
+    if not re.search(r'[A-Z]', password):
+        return False, "Password must contain at least 1 uppercase letter"
+    if not re.search(r'[a-z]', password):
+        return False, "Password must contain at least 1 lowercase letter"
+    if not re.search(r'[0-9]', password):
+        return False, "Password must contain at least 1 number"
+    return True, ""
+
+
+def validate_email_format(email):
+    """Validate email format using Django's built-in validator."""
+    try:
+        validate_email(email)
+        return True, ""
+    except ValidationError:
+        return False, "Please enter a valid email address"
+
+
+def check_login_rate_limit(request, login_type="user"):
+    """
+    Session-based brute force protection.
+    Returns (is_allowed, error_message).
+    Tracks failed attempts per login_type (user/admin/seller).
+    """
+    max_attempts = getattr(settings, 'LOGIN_MAX_ATTEMPTS', 5)
+    lockout_duration = getattr(settings, 'LOGIN_LOCKOUT_DURATION', 1800)
+
+    key_attempts = f"login_attempts_{login_type}"
+    key_lockout = f"login_lockout_until_{login_type}"
+
+    # Check if currently locked out
+    lockout_until = request.session.get(key_lockout, 0)
+    if time.time() < lockout_until:
+        remaining = int(lockout_until - time.time())
+        minutes = remaining // 60
+        return False, f"Too many failed attempts. Try again in {minutes + 1} minute(s)."
+
+    # If lockout expired, reset
+    if lockout_until > 0 and time.time() >= lockout_until:
+        request.session[key_attempts] = 0
+        request.session[key_lockout] = 0
+
+    return True, ""
+
+
+def record_failed_login(request, login_type="user"):
+    """Record a failed login attempt and lock out if threshold reached."""
+    max_attempts = getattr(settings, 'LOGIN_MAX_ATTEMPTS', 5)
+    lockout_duration = getattr(settings, 'LOGIN_LOCKOUT_DURATION', 1800)
+
+    key_attempts = f"login_attempts_{login_type}"
+    key_lockout = f"login_lockout_until_{login_type}"
+
+    attempts = request.session.get(key_attempts, 0) + 1
+    request.session[key_attempts] = attempts
+
+    if attempts >= max_attempts:
+        request.session[key_lockout] = time.time() + lockout_duration
+        return True  # Locked out
+    return False  # Not locked out yet
+
+
+def reset_login_attempts(request, login_type="user"):
+    """Reset login attempt counter after successful login."""
+    request.session[f"login_attempts_{login_type}"] = 0
+    request.session[f"login_lockout_until_{login_type}"] = 0
+
+
+# File upload security constants
+ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
+ALLOWED_IMAGE_MIMETYPES = {'image/jpeg', 'image/png', 'image/webp'}
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB
+
+
+def validate_image_upload(uploaded_file):
+    """
+    Validate an uploaded file is a legitimate image.
+    Checks: extension, MIME type, file size.
+    Returns (is_valid, error_message).
+    """
+    if not uploaded_file:
+        return True, ""  # No file uploaded, skip validation
+
+    # Check file size
+    if uploaded_file.size > MAX_UPLOAD_SIZE:
+        return False, f"File too large. Maximum size is {MAX_UPLOAD_SIZE // (1024*1024)}MB."
+
+    # Check file extension
+    file_ext = os.path.splitext(uploaded_file.name)[1].lower()
+    if file_ext not in ALLOWED_IMAGE_EXTENSIONS:
+        return False, f"Invalid file type '{file_ext}'. Allowed: {', '.join(ALLOWED_IMAGE_EXTENSIONS)}"
+
+    # Check MIME type
+    mime_type, _ = mimetypes.guess_type(uploaded_file.name)
+    if mime_type not in ALLOWED_IMAGE_MIMETYPES:
+        return False, f"Invalid file format. Allowed: JPG, PNG, WebP."
+
+    return True, ""
+
 
 # Create your views here.
 # Web Page
@@ -167,39 +293,48 @@ def checkout(request):
 
 
 def checkAdminLogin(request):
-    if request.POST["selRole"] == "Admin":
-        if AdminMaster.objects.filter(
-            ad_email=request.POST["txtEmail"],
-            ad_password=request.POST["txtPassword"],
-            ad_status="0",
-        ).exists():
-            admin_json = AdminMaster.objects.filter(
-                ad_email=request.POST["txtEmail"]
-            ).values()
-            data = list(admin_json)
-            dictValue = data[0]
-            request.session["email"] = dictValue["ad_email"]
-            request.session["role"] = dictValue["ad_role"]
-            request.session["name"] = dictValue["ad_name"]
-            return HttpResponse(dictValue["ad_role"])
-        else:
+    """Handle admin and seller login with password hashing and rate limiting."""
+    role = request.POST.get("selRole", "")
+    email = request.POST.get("txtEmail", "").strip()
+    password = request.POST.get("txtPassword", "")
+    login_type = "admin" if role == "Admin" else "seller"
+
+    # SECURITY: Check brute force rate limit
+    is_allowed, error_msg = check_login_rate_limit(request, login_type)
+    if not is_allowed:
+        return HttpResponse(error_msg)
+
+    if role == "Admin":
+        try:
+            admin = AdminMaster.objects.get(ad_email=email, ad_status=0)
+            # SECURITY: Verify password using Django's check_password
+            if check_password(password, admin.ad_password):
+                reset_login_attempts(request, login_type)
+                request.session["email"] = admin.ad_email
+                request.session["role"] = admin.ad_role
+                request.session["name"] = admin.ad_name
+                return HttpResponse(admin.ad_role)
+            else:
+                record_failed_login(request, login_type)
+                return HttpResponse("0")
+        except AdminMaster.DoesNotExist:
+            record_failed_login(request, login_type)
             return HttpResponse("0")
     else:
-        if AdminSeller.objects.filter(
-            s_email=request.POST["txtEmail"],
-            s_password=request.POST["txtPassword"],
-            s_status="0",
-        ).exists():
-            admin_json = AdminSeller.objects.filter(
-                s_email=request.POST["txtEmail"]
-            ).values()
-            data = list(admin_json)
-            dictValue = data[0]
-            request.session["email"] = dictValue["s_email"]
-            request.session["role"] = dictValue["s_role"]
-            request.session["name"] = dictValue["s_name"]
-            return HttpResponse(dictValue["s_role"])
-        else:
+        try:
+            seller = AdminSeller.objects.get(s_email=email, s_status=0)
+            # SECURITY: Verify password using Django's check_password
+            if check_password(password, seller.s_password):
+                reset_login_attempts(request, login_type)
+                request.session["email"] = seller.s_email
+                request.session["role"] = seller.s_role
+                request.session["name"] = seller.s_name
+                return HttpResponse(seller.s_role)
+            else:
+                record_failed_login(request, login_type)
+                return HttpResponse("0")
+        except AdminSeller.DoesNotExist:
+            record_failed_login(request, login_type)
             return HttpResponse("0")
 
 
@@ -217,11 +352,12 @@ def adminDetails(request):
         return JsonResponse({"error": "Unauthorized"}, status=401)
     
     if request.POST["action"] == "add":
+        # SECURITY: Hash password before storing
         AdminMaster.objects.create(
             ad_name=request.POST["txtName"],
             ad_email=request.POST["txtEmail"],
             ad_mobile=request.POST["txtMobileNo"],
-            ad_password=request.POST["txtPassword"],
+            ad_password=make_password(request.POST["txtPassword"]),
             ad_role=request.POST["selRole"],
         )
 
@@ -254,11 +390,12 @@ def adminSellerDetails(request):
         return JsonResponse({"error": "Unauthorized"}, status=401)
     
     if request.POST["action"] == "add":
+        # SECURITY: Hash password before storing
         AdminSeller.objects.create(
             s_name=request.POST["txtName"],
             s_email=request.POST["txtEmail"],
             s_mobile=request.POST["txtMobileNo"],
-            s_password=request.POST["txtPassword"],
+            s_password=make_password(request.POST["txtPassword"]),
             s_role=request.POST["selRole"],
             s_address=request.POST["txtAddress"],
         )
@@ -358,6 +495,12 @@ def sellerPropertiesDetails(request):
         return JsonResponse({"error": "Unauthorized"}, status=401)
     
     if request.POST["action"] == "add":
+        # SECURITY: Validate uploaded images before saving
+        for field in ["filePhoto", "filePhoto1"]:
+            if field in request.FILES:
+                is_valid, err = validate_image_upload(request.FILES[field])
+                if not is_valid:
+                    return JsonResponse({"error": err}, status=400)
         Properties.objects.create(
             pr_image=request.FILES["filePhoto"],
             pr_image1=request.FILES["filePhoto1"],
@@ -407,6 +550,11 @@ def adminProductDetails(request):
             return JsonResponse({"error": "Unauthorized"}, status=401)
         
         if request.POST["action"] == "add":
+            # SECURITY: Validate uploaded image
+            if "filePhoto" in request.FILES:
+                is_valid, err = validate_image_upload(request.FILES["filePhoto"])
+                if not is_valid:
+                    return JsonResponse({"error": err}, status=400)
             Products.objects.create(
                 pd_image=request.FILES["filePhoto"],
                 pd_name=request.POST["txtName"],
@@ -446,8 +594,14 @@ def sellerProductsDetails(request):
             return JsonResponse({"error": "Unauthorized"}, status=401)
         
         if request.POST["action"] == "add":
+            # SECURITY: Validate uploaded image
+            photo = request.FILES.get("filePhoto")
+            if photo:
+                is_valid, err = validate_image_upload(photo)
+                if not is_valid:
+                    return JsonResponse({"error": err}, status=400)
             Products.objects.create(
-                pd_image=request.FILES.get("filePhoto", ""),
+                pd_image=photo or "",
                 pd_name=request.POST["txtName"],
                 pd_category=request.POST["selCategory"],
                 pd_price=request.POST["txtPrice"],
@@ -528,6 +682,12 @@ def adminPropertiesDetails(request):
                 return JsonResponse({"error": "Unauthorized"}, status=401)
             
             if request.POST.get("action") == "add":
+                # SECURITY: Validate uploaded images
+                for field in ["filePhoto", "filePhoto1"]:
+                    if field in request.FILES:
+                        is_valid, err = validate_image_upload(request.FILES[field])
+                        if not is_valid:
+                            return JsonResponse({"error": err}, status=400)
                 Properties.objects.create(
                     pr_image=request.FILES.get("filePhoto", ""),
                     pr_image1=request.FILES.get("filePhoto1", ""),
@@ -675,14 +835,14 @@ def profileDetails(request):
                 ad_name=request.POST["txtName"],
                 ad_email=request.POST["txtEmail"],
                 ad_mobile=request.POST["txtMobileNo"],
-                ad_password=request.POST["txtPassword"],
+                ad_password=make_password(request.POST["txtPassword"]),  # SECURITY: Hash password
             )
         else:
             AdminSeller.objects.filter(s_id=request.POST["id"]).update(
                 s_name=request.POST["txtName"],
                 s_email=request.POST["txtEmail"],
                 s_mobile=request.POST["txtMobileNo"],
-                s_password=request.POST["txtPassword"],
+                s_password=make_password(request.POST["txtPassword"]),  # SECURITY: Hash password
             )
 
     return HttpResponse()
@@ -881,7 +1041,7 @@ def addToCart(request):
 # ===== USER REGISTRATION & LOGIN =====
 
 def userRegister(request):
-    """Handle user registration"""
+    """Handle user registration with password hashing and validation."""
     if request.method == "POST":
         us_name = request.POST.get("txtName", "").strip()
         us_email = request.POST.get("txtEmail", "").strip()
@@ -891,6 +1051,17 @@ def userRegister(request):
         if not all([us_name, us_email, us_mobile, us_password]):
             return JsonResponse({"status": "error", "message": "All fields are required"})
         
+        # SECURITY: Validate email format
+        is_valid_email, email_err = validate_email_format(us_email)
+        if not is_valid_email:
+            return JsonResponse({"status": "error", "message": email_err})
+        
+        # SECURITY: Validate password strength
+        is_strong, pw_err = validate_password_strength(us_password)
+        if not is_strong:
+            return JsonResponse({"status": "error", "message": pw_err})
+        
+        # SECURITY: Check for duplicate emails across all user types
         if Register.objects.filter(us_email=us_email).exists():
             return JsonResponse({"status": "error", "message": "Email already registered"})
         
@@ -899,7 +1070,7 @@ def userRegister(request):
                 us_name=us_name,
                 us_email=us_email,
                 us_mobile=us_mobile,
-                us_password=us_password,
+                us_password=make_password(us_password),  # SECURITY: Hash password
                 us_status=0,
                 us_created_by="user"
             )
@@ -924,7 +1095,7 @@ def sellerRegisterPage(request):
     return render(request, "web/seller_register.html")
 
 def sellerRegister(request):
-    """Handle seller registration"""
+    """Handle seller registration with password hashing and validation."""
     if request.method == "POST":
         s_name = request.POST.get("txtName", "").strip()
         s_email = request.POST.get("txtEmail", "").strip()
@@ -935,6 +1106,16 @@ def sellerRegister(request):
         if not all([s_name, s_email, s_mobile, s_password]):
             return JsonResponse({"status": "error", "message": "All fields are required"})
         
+        # SECURITY: Validate email format
+        is_valid_email, email_err = validate_email_format(s_email)
+        if not is_valid_email:
+            return JsonResponse({"status": "error", "message": email_err})
+        
+        # SECURITY: Validate password strength
+        is_strong, pw_err = validate_password_strength(s_password)
+        if not is_strong:
+            return JsonResponse({"status": "error", "message": pw_err})
+        
         # Check if email already exists in users or sellers
         if Register.objects.filter(us_email=s_email).exists() or AdminSeller.objects.filter(s_email=s_email).exists():
             return JsonResponse({"status": "error", "message": "Email already registered"})
@@ -944,7 +1125,7 @@ def sellerRegister(request):
                 s_name=s_name,
                 s_email=s_email,
                 s_mobile=s_mobile,
-                s_password=s_password,
+                s_password=make_password(s_password),  # SECURITY: Hash password
                 s_role="Seller",
                 s_address="N/A",  # Default address
                 s_status=0,
@@ -955,7 +1136,7 @@ def sellerRegister(request):
             return JsonResponse({"status": "error", "message": str(e)})
 
 def userLoginValidate(request):
-    """Handle user login"""
+    """Handle user login with hashed password verification and rate limiting."""
     if request.method == "POST":
         us_email = request.POST.get("txtEmail", "").strip()
         us_password = request.POST.get("txtPassword", "").strip()
@@ -963,13 +1144,25 @@ def userLoginValidate(request):
         if not us_email or not us_password:
             return JsonResponse({"status": "error", "message": "Email and password are required"})
         
+        # SECURITY: Check brute force rate limit
+        is_allowed, rate_err = check_login_rate_limit(request, "user")
+        if not is_allowed:
+            return JsonResponse({"status": "error", "message": rate_err})
+        
         try:
-            user = Register.objects.get(us_email=us_email, us_password=us_password)
-            request.session["web_email"] = us_email
-            request.session["web_name"] = user.us_name
-            request.session["web_id"] = user.us_id
-            return JsonResponse({"status": "success", "message": "Login successful", "redirect": "/"})
+            user = Register.objects.get(us_email=us_email)
+            # SECURITY: Verify password using Django's check_password
+            if check_password(us_password, user.us_password):
+                reset_login_attempts(request, "user")
+                request.session["web_email"] = us_email
+                request.session["web_name"] = user.us_name
+                request.session["web_id"] = user.us_id
+                return JsonResponse({"status": "success", "message": "Login successful", "redirect": "/"})
+            else:
+                record_failed_login(request, "user")
+                return JsonResponse({"status": "error", "message": "Invalid email or password"})
         except Register.DoesNotExist:
+            record_failed_login(request, "user")
             return JsonResponse({"status": "error", "message": "Invalid email or password"})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)})
@@ -1029,15 +1222,23 @@ def checkEmail(request):
 
 
 def updatePassword(request):
+    """Handle password reset with hashing and strength validation."""
+    new_password = request.POST.get("txtPassword", "")
+    
+    # SECURITY: Validate password strength
+    is_strong, pw_err = validate_password_strength(new_password)
+    if not is_strong:
+        return HttpResponse(pw_err)
+    
     role = request.session.get("forgot_role", "User")
     if role == "Seller":
         AdminSeller.objects.filter(s_email=request.session["forgot_email"]).update(
-            s_password=request.POST["txtPassword"]
+            s_password=make_password(new_password)  # SECURITY: Hash password
         )
         return HttpResponse("seller")
     else:
         Register.objects.filter(us_email=request.session["forgot_email"]).update(
-            us_password=request.POST["txtPassword"]
+            us_password=make_password(new_password)  # SECURITY: Hash password
         )
         return HttpResponse("1")
 
@@ -1162,8 +1363,14 @@ def sellerWebProductsDetails(request):
             return JsonResponse({"error": "Unauthorized"}, status=401)
         
         if request.POST["action"] == "add":
+            # SECURITY: Validate uploaded image
+            photo = request.FILES.get("filePhoto")
+            if photo:
+                is_valid, err = validate_image_upload(photo)
+                if not is_valid:
+                    return JsonResponse({"error": err}, status=400)
             Products.objects.create(
-                pd_image=request.FILES.get("filePhoto", ""),
+                pd_image=photo or "",
                 pd_name=request.POST["txtName"],
                 pd_category=request.POST["selCategory"],
                 pd_price=request.POST["txtPrice"],
@@ -1190,9 +1397,7 @@ def sellerWebProductsDetails(request):
 
         elif request.POST["action"] == "delete":
             pd_id = request.POST.get("id")
-            print(f"DEBUG: sellerWebProductsDetails delete hit with ID: {pd_id}")
-            updated_count = Products.objects.filter(pd_id=pd_id).update(pd_status=1)
-            print(f"DEBUG: Successfully updated {updated_count} rows.")
+            Products.objects.filter(pd_id=pd_id).update(pd_status=1)
 
         return HttpResponse()
     except Exception as e:

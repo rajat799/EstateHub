@@ -1,3 +1,7 @@
+# =============================================================================
+# EstateHub — .gitignore
+# =============================================================================
+
 # Django
 *.log
 *.pot
@@ -9,11 +13,34 @@ db.sqlite3-journal
 media/
 staticfiles/
 
+# Environment variables (CRITICAL — never commit secrets)
+.env
+*.env
+
 # Virtual Environment
 .venv/
 venv/
 ENV/
+env/
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Byte-compiled / Cached
+*.py[cod]
+*$py.class
