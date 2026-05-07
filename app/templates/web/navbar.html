@@ -300,7 +300,17 @@ html.dark-mode .owl-carousel * { transition: none !important; }
         <a href="/" class="navbar-brand d-flex align-items-center text-center">
             <h4 class="m-0 text-primary">EstateHub</h4>
         </a>
-        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <!-- Dark mode toggle visible on mobile (outside collapse) -->
+        <button
+            class="dm-toggle-btn d-lg-none"
+            id="darkModeToggleMobile"
+            type="button"
+            title="Toggle Dark Mode"
+            aria-label="Toggle Dark Mode"
+            style="order: 1;">
+            ☀️
+        </button>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" style="order: 2;">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -311,12 +321,12 @@ html.dark-mode .owl-carousel * { transition: none !important; }
                 <a href="/productlist/" class="nav-item nav-link">Shop Interior</a>
                 <a href="/about/" class="nav-item nav-link">About</a>
                 <a href="/contact/" class="nav-item nav-link">Contact</a>
-                <a href="/cart/" class="nav-item nav-link"><i class="fas fa-shopping-cart"></i></a>
+                <a href="/cart/" class="nav-item nav-link"><i class="fas fa-shopping-cart"></i> <span class="d-lg-none ms-2">Cart</span></a>
             </div>
 
-            <!-- ☀️🌙 Dark Mode Toggle -->
+            <!-- ☀️🌙 Dark Mode Toggle (desktop only — mobile has its own above) -->
             <button
-                class="dm-toggle-btn"
+                class="dm-toggle-btn d-none d-lg-inline-flex"
                 id="darkModeToggle"
                 type="button"
                 title="Switch to Dark Mode"
@@ -325,7 +335,9 @@ html.dark-mode .owl-carousel * { transition: none !important; }
             </button>
 
             {% if request.session.web_email %}
-            <div class="d-flex align-items-center gap-3">
+            <!-- ===== LOGGED IN: Profile + Actions ===== -->
+            <!-- Desktop: inline layout -->
+            <div class="d-none d-lg-flex align-items-center gap-3">
                 <div class="position-relative">
                     <button class="btn p-0 d-flex align-items-center justify-content-center rounded-circle"
                             id="profileBtn"
@@ -340,11 +352,40 @@ html.dark-mode .owl-carousel * { transition: none !important; }
                         <a href="/logout_web/"   style="padding:10px 15px;display:block;color:#dc3545;text-decoration:none;"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
                     </div>
                 </div>
-                <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-flex">Sell Now</a>
+                <a href="/admin_login/" class="btn btn-primary px-3">Sell Now</a>
+            </div>
+            <!-- Mobile: stacked layout inside collapse menu -->
+            <div class="d-lg-none border-top mt-2 pt-3 pb-3">
+                <div class="d-flex align-items-center mb-3 px-2">
+                    <div style="width:36px;height:36px;background-color:#007bff;color:white;font-weight:bold;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;">
+                        {{ request.session.web_name|first|upper }}
+                    </div>
+                    <span class="ms-2 fw-bold" style="color:#333;">{{ request.session.web_name }}</span>
+                </div>
+                <a href="/user_profile/" class="nav-item nav-link py-2"><i class="fas fa-user me-2 text-primary"></i>View Profile</a>
+                <a href="/my_bookings/" class="nav-item nav-link py-2"><i class="fas fa-bookmark me-2 text-primary"></i>View Bookings</a>
+                <a href="/my_orders/" class="nav-item nav-link py-2"><i class="fas fa-shopping-bag me-2 text-primary"></i>View Orders</a>
+                <div class="d-flex gap-2 mt-3 px-2">
+                    <a href="/admin_login/" class="btn btn-primary flex-fill">Sell Now</a>
+                    <a href="/logout_web/" class="btn btn-outline-danger flex-fill">Logout</a>
+                </div>
             </div>
             {% else %}
-            <a href="/web_login/"   class="btn btn-primary px-3 me-2 d-none d-lg-flex">User Login</a>
-            <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-flex">Sell Now</a>
+            <!-- ===== NOT LOGGED IN: Login + Sell Now ===== -->
+            <!-- Desktop -->
+            <a href="/web_login/"   class="btn btn-primary px-3 me-2 d-none d-lg-inline-block">User Login</a>
+            <a href="/admin_login/" class="btn btn-primary px-3 d-none d-lg-inline-block">Sell Now</a>
+            <!-- Mobile -->
+            <div class="d-lg-none border-top mt-2 pt-3 pb-3">
+                <div class="d-flex gap-2 px-2">
+                    <a href="/web_login/" class="btn btn-primary flex-fill py-2">
+                        <i class="fas fa-sign-in-alt me-1"></i> User Login
+                    </a>
+                    <a href="/admin_login/" class="btn btn-outline-primary flex-fill py-2">
+                        <i class="fas fa-store me-1"></i> Sell Now
+                    </a>
+                </div>
+            </div>
             {% endif %}
         </div>
     </nav>
@@ -361,26 +402,35 @@ html.dark-mode .owl-carousel * { transition: none !important; }
         document.documentElement.classList.add(DARK_CLASS);
     }
 
-    function updateIcon() {
-        var btn = document.getElementById('darkModeToggle');
-        if (!btn) return;
+    function updateAllIcons() {
         var isDark = document.documentElement.classList.contains(DARK_CLASS);
-        btn.innerHTML = isDark ? '🌙' : '☀️';
-        btn.title     = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        var icon = isDark ? '🌙' : '☀️';
+        var title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        // Update both desktop and mobile toggle buttons
+        ['darkModeToggle', 'darkModeToggleMobile'].forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (btn) {
+                btn.innerHTML = icon;
+                btn.title = title;
+            }
+        });
     }
 
     function toggleDark() {
         var isDark = document.documentElement.classList.toggle(DARK_CLASS);
         localStorage.setItem(STORAGE_KEY, isDark ? 'true' : 'false');
-        updateIcon();
+        updateAllIcons();
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        updateIcon();
-        var btn = document.getElementById('darkModeToggle');
-        if (btn) btn.addEventListener('click', toggleDark);
+        updateAllIcons();
+        // Attach click to both desktop and mobile buttons
+        ['darkModeToggle', 'darkModeToggleMobile'].forEach(function(id) {
+            var btn = document.getElementById(id);
+            if (btn) btn.addEventListener('click', toggleDark);
+        });
 
-        /* Profile dropdown */
+        /* Profile dropdown (desktop only) */
         var profileBtn      = document.getElementById('profileBtn');
         var profileDropdown = document.getElementById('profileDropdown');
         if (profileBtn && profileDropdown) {

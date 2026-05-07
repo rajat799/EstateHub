@@ -438,3 +438,165 @@
     padding-right: 0;
     border-right: none;
 }
+
+
+/* ====================================================================
+   RESPONSIVE / MOBILE FIXES
+   ==================================================================== */
+
+/* --- Global mobile improvements --- */
+@media (max-width: 767.98px) {
+    /* Hero heading */
+    .display-5 {
+        font-size: 1.6rem !important;
+    }
+
+    /* Hero section padding */
+    .header .col-md-6.p-5 {
+        padding: 1.5rem !important;
+    }
+
+    /* Property/Product card images */
+    .property-item img,
+    .property-item .position-relative img {
+        height: 200px !important;
+        object-fit: cover;
+    }
+
+    /* Search bar: stack inputs vertically */
+    .container-fluid.bg-primary .row.g-2 .col-md-4,
+    .container-fluid.bg-primary .row.g-2 .col-md-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 8px;
+    }
+
+    /* Category cards: 2 per row on small phones */
+    .cat-item .rounded.p-4 {
+        padding: 1rem !important;
+    }
+    .cat-item .icon {
+        padding: 10px !important;
+    }
+    .cat-item .icon i {
+        font-size: 1.8rem !important;
+    }
+
+    /* Footer: full width columns */
+    .footer .col-lg-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Call to action section */
+    .bg-light.rounded.p-3 {
+        padding: 0.5rem !important;
+    }
+    .bg-white.rounded.p-4 {
+        padding: 1rem !important;
+    }
+
+    /* Back to top button */
+    .back-to-top {
+        right: 15px !important;
+        bottom: 15px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Ensure all images are responsive */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Form controls touch-friendly */
+    .form-control, .form-select, .btn {
+        min-height: 44px;
+    }
+}
+
+/* --- Tablet (768px - 991px) --- */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .display-5 {
+        font-size: 2rem !important;
+    }
+
+    /* Property cards: 2 per row */
+    .property-item img {
+        height: 220px !important;
+        object-fit: cover;
+    }
+
+    /* Search bar: better layout */
+    .container-fluid.bg-primary .row.g-2 .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* --- Navbar mobile enhancements --- */
+@media (max-width: 991.98px) {
+    /* Navbar mobile padding */
+    .nav-bar {
+        padding: 0 !important;
+    }
+
+    .navbar {
+        padding: 0.5rem 1rem !important;
+    }
+
+    /* Nav links: touch-friendly sizing */
+    .navbar-light .navbar-nav .nav-link {
+        padding: 12px 0 !important;
+        font-size: 15px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* Dark mode: mobile nav borders */
+    html.dark-mode .navbar-light .navbar-nav .nav-link {
+        border-bottom-color: rgba(255,255,255,0.05) !important;
+    }
+
+    /* Mobile profile section dark mode */
+    html.dark-mode .d-lg-none.border-top {
+        border-top-color: rgba(255,255,255,0.1) !important;
+    }
+    html.dark-mode .d-lg-none .fw-bold {
+        color: #e2e8f0 !important;
+    }
+
+    /* Ensure hamburger toggle is visible */
+    .navbar-toggler {
+        border-color: rgba(0,0,0,0.1) !important;
+        padding: 0.4rem 0.6rem;
+    }
+
+    /* Header negative margin fix */
+    .header {
+        margin-top: 0 !important;
+    }
+}
+
+/* --- Very small screens (below 360px) --- */
+@media (max-width: 359.98px) {
+    .display-5 {
+        font-size: 1.3rem !important;
+    }
+
+    .navbar-brand h4 {
+        font-size: 1.1rem !important;
+    }
+
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    /* Stack footer menu links */
+    .footer .footer-menu a {
+        display: block;
+        margin: 5px 0;
+        padding: 0;
+        border-right: none;
+    }
+}
