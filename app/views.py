@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from datetime import date
 from django.db.models import Q
+from django.db import transaction
 from datetime import date, timedelta
 
 # =============================================================================
@@ -310,6 +311,7 @@ def checkAdminLogin(request):
             # SECURITY: Verify password using Django's check_password
             if check_password(password, admin.ad_password):
                 reset_login_attempts(request, login_type)
+                request.session.cycle_key()  # SECURITY: Prevent session fixation
                 request.session["email"] = admin.ad_email
                 request.session["role"] = admin.ad_role
                 request.session["name"] = admin.ad_name
@@ -326,6 +328,7 @@ def checkAdminLogin(request):
             # SECURITY: Verify password using Django's check_password
             if check_password(password, seller.s_password):
                 reset_login_attempts(request, login_type)
+                request.session.cycle_key()  # SECURITY: Prevent session fixation
                 request.session["email"] = seller.s_email
                 request.session["role"] = seller.s_role
                 request.session["name"] = seller.s_name
@@ -750,8 +753,8 @@ def webSellerProperties(request):
 
             booking_id = value["bk_id"]
             Booking.objects.filter(bk_id=booking_id).update(bk_status="Cancelled")
-        except:
-            pass
+        except Exception:
+            pass  # Skip invalid bookings gracefully
 
     # Also reset properties whose bookings were already cancelled
     # This prevents properties from being stuck as "sold" after cancellation
@@ -759,8 +762,8 @@ def webSellerProperties(request):
     for cb in cancelledBookings:
         try:
             Properties.objects.filter(pr_id=cb["bk_property_id"], pr_sold="YES").update(pr_sold="NO")
-        except:
-            pass
+        except Exception:
+            pass  # Skip invalid cancelled bookings
 
     data = Properties.objects.filter(pr_status=0).values()
     data = list(data)
@@ -796,12 +799,11 @@ def getWebSearchProperties(request):
 def getWebSearchProducts(request):
     data = Products.objects.filter(
         pd_status=0,
-        pd_property_type=request.POST["selProduct"],
-        pd_place=request.POST["selPlace"],
+        pd_category=request.POST.get("selProduct", ""),
     ).values()
     data = list(data)
     values = JsonResponse(data, safe=False)
-    return values   
+    return values
 
 
 def getWebPlaces(request):
@@ -849,7 +851,11 @@ def profileDetails(request):
 
 
 def userUpdateProfileDetails(request):
-    Register.objects.filter(us_id=request.POST["id"]).update(
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    # SECURITY: Users can only update their own profile (IDOR protection)
+    Register.objects.filter(us_id=request.POST["id"], us_email=request.session["web_email"]).update(
         us_name=request.POST["txtName"],
         us_email=request.POST["txtEmail"],
         us_mobile=request.POST["txtMobileNo"],
@@ -866,6 +872,9 @@ def getWebProfile(request):
 
 
 def userProfileDetails(request):
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Register.objects.filter(us_email=request.session["web_email"]).values()
     data = list(data)
     values = JsonResponse(data, safe=False)
@@ -957,38 +966,42 @@ def bookProperty(request):
 
 def placeOrder(request):
     if "web_email" in request.session:
-        Order.objects.create(
-            or_name=request.POST["txtName"],
-            or_date=request.POST["txtDate"],
-            or_transaction_id=request.POST["transaction_id"],
-            or_mobile=request.POST["txtPhone"],
-            or_email=request.POST["txtEmail"],
-            or_address=request.POST["txtAddress"],
-            or_total_amount=request.POST["totalAmount"],
-            or_user_email=request.session["web_email"],
-            or_status="Success",
-            or_created_by=request.session["web_email"]
-        )
-
-        latest_order = Order.objects.latest('or_id')
-        orderID = latest_order.or_id
-
-        jsonData = Cart.objects.filter(ct_user_email=request.session["web_email"]).values()
-        data = list(jsonData)
-
-        for dataValue in data:
-            PurchasedProducts.objects.create(
-                pp_or_id = orderID,
-                pp_image = dataValue['ct_image'],
-                pp_name = dataValue['ct_name'],
-                pp_category = dataValue['ct_category'],
-                pp_price = dataValue['ct_price'],
-                pp_desc = dataValue['ct_desc'],
-                pp_qty = dataValue['ct_qty'],
-                pp_total_amount = dataValue['ct_total_amount'],
-                pp_user_email = dataValue['ct_user_email'],
-                pp_created_by = dataValue['ct_created_by'], # Link to the seller
+        # SECURITY: Wrap in transaction to prevent partial orders
+        with transaction.atomic():
+            order = Order.objects.create(
+                or_name=request.POST["txtName"],
+                or_date=request.POST["txtDate"],
+                or_transaction_id=request.POST["transaction_id"],
+                or_mobile=request.POST["txtPhone"],
+                or_email=request.POST["txtEmail"],
+                or_address=request.POST["txtAddress"],
+                or_total_amount=request.POST["totalAmount"],
+                or_user_email=request.session["web_email"],
+                or_status="Success",
+                or_created_by=request.session["web_email"]
             )
+
+            # FIX: Use returned object ID instead of querying latest (race condition)
+            orderID = order.or_id
+
+            jsonData = Cart.objects.filter(ct_user_email=request.session["web_email"]).values()
+            data = list(jsonData)
+
+            for dataValue in data:
+                PurchasedProducts.objects.create(
+                    pp_or_id = orderID,
+                    pp_image = dataValue['ct_image'],
+                    pp_name = dataValue['ct_name'],
+                    pp_category = dataValue['ct_category'],
+                    pp_price = dataValue['ct_price'],
+                    pp_desc = dataValue['ct_desc'],
+                    pp_qty = dataValue['ct_qty'],
+                    pp_total_amount = dataValue['ct_total_amount'],
+                    pp_user_email = dataValue['ct_user_email'],
+                    pp_created_by = dataValue['ct_created_by'],
+                )
+
+            Cart.objects.filter(ct_user_email=request.session["web_email"]).delete()
 
         try:
             send_mail(
@@ -1001,7 +1014,6 @@ def placeOrder(request):
         except Exception:
             pass  # Email sending is optional, don't block the order
 
-        Cart.objects.filter(ct_user_email=request.session["web_email"]).delete()
         return HttpResponse("1")
     else:
         return HttpResponse("signin")
@@ -1018,7 +1030,7 @@ def addToCart(request):
     clean_price = str(dictValue["pd_price"]).replace('₹', '').replace(',', '').strip()
     try:
         price_val = int(float(clean_price))
-    except:
+    except (ValueError, TypeError):
         price_val = 0
         
     totalAmount = int(request.POST["selQTY"]) * price_val
@@ -1154,6 +1166,7 @@ def userLoginValidate(request):
             # SECURITY: Verify password using Django's check_password
             if check_password(us_password, user.us_password):
                 reset_login_attempts(request, "user")
+                request.session.cycle_key()  # SECURITY: Prevent session fixation
                 request.session["web_email"] = us_email
                 request.session["web_name"] = user.us_name
                 request.session["web_id"] = user.us_id
@@ -1179,7 +1192,7 @@ def logoutWeb(request):
             del request.session["web_name"]
         if "web_id" in request.session:
             del request.session["web_id"]
-    except:
+    except Exception:
         pass
     return redirect("/")
 
@@ -1247,6 +1260,9 @@ def updatePassword(request):
 
 
 def bookingDetails(request):
+    # SECURITY: Verify seller/admin is logged in
+    if "email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Booking.objects.filter(bk_created_by=request.session["email"]).values()
     data = list(data)
     values = JsonResponse(data, safe=False)
@@ -1254,6 +1270,9 @@ def bookingDetails(request):
 
 
 def bookingDetailsAdmin(request):
+    # SECURITY: Only admins can view all bookings
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Booking.objects.filter().values()
     data = list(data)
     values = JsonResponse(data, safe=False)
@@ -1261,6 +1280,9 @@ def bookingDetailsAdmin(request):
 
 
 def myBookings(request):
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Booking.objects.filter(
         bk_user_email=request.session["web_email"], bk_status="Success"
     ).values()
@@ -1269,6 +1291,9 @@ def myBookings(request):
     return values
 
 def myCart(request):
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Cart.objects.filter(
         ct_user_email=request.session["web_email"]
     ).values()
@@ -1277,12 +1302,18 @@ def myCart(request):
     return values
 
 def myOrders(request):
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Order.objects.filter(or_user_email=request.session["web_email"]).values()
     data = list(data)
     values = JsonResponse(data, safe=False)
     return values
 
 def myOrdersAdmin(request):
+    # SECURITY: Only admins can view all orders
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     data = Order.objects.filter().values()
     data = list(data)
     values = JsonResponse(data, safe=False)
@@ -1322,21 +1353,40 @@ def userProfile(request):
 
 
 def cancelBooking(request):
-    Properties.objects.filter(pr_id=request.POST["propertyID"]).update(pr_sold="NO")
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    # SECURITY: Verify booking belongs to this user (IDOR protection)
+    booking = Booking.objects.filter(
+        bk_id=request.POST["bookingID"],
+        bk_user_email=request.session["web_email"]
+    ).first()
+    if not booking:
+        return JsonResponse({"error": "Booking not found"}, status=404)
 
-    Booking.objects.filter(bk_id=request.POST["bookingID"]).update(
-        bk_status="Cancelled"
-    )
+    Properties.objects.filter(pr_id=request.POST["propertyID"]).update(pr_sold="NO")
+    Booking.objects.filter(
+        bk_id=request.POST["bookingID"],
+        bk_user_email=request.session["web_email"]
+    ).update(bk_status="Cancelled")
 
     return HttpResponse()
 
 def removeCart(request):
-    Cart.objects.filter(ct_id=request.POST["cartID"]).delete()
+    # SECURITY: Verify user is logged in
+    if "web_email" not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    # SECURITY: Users can only remove their own cart items (IDOR protection)
+    Cart.objects.filter(ct_id=request.POST["cartID"], ct_user_email=request.session["web_email"]).delete()
     return HttpResponse()
 
 
 def userDetails(request):
-    data = Register.objects.filter().values()
+    # SECURITY: Only admins can view all user details
+    if "email" not in request.session or request.session.get("role") != "Admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    # SECURITY: Exclude password field from response
+    data = Register.objects.filter().values("us_id", "us_name", "us_email", "us_mobile", "us_status", "us_created_by")
     data = list(data)
     values = JsonResponse(data, safe=False)
     return values
