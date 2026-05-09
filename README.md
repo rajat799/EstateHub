@@ -29,4 +29,4 @@ Visit `http://127.0.0.1:8000/` in your browser!
 ---
 
 ## 🌐 Live Website
-**Deployed Link:** [http://rajat799.pythonanywhere.com/](http://rajat799.pythonanywhere.com/)
+**Deployed Link:** [http://EstateHub.pythonanywhere.com/](http://EstateHub.pythonanywhere.com/)
