@@ -1287,6 +1287,32 @@ def myBookings(request):
         bk_user_email=request.session["web_email"], bk_status="Success"
     ).values()
     data = list(data)
+
+    # Enrich each booking with property details
+    for item in data:
+        try:
+            prop = Properties.objects.filter(pr_id=item["bk_property_id"]).values(
+                "pr_category", "pr_property_type", "pr_location", "pr_place", "pr_image"
+            ).first()
+            if prop:
+                item["property_category"] = prop["pr_category"]
+                item["property_type"] = prop["pr_property_type"]  # e.g. "Buy" or "Rent"
+                item["property_location"] = prop["pr_location"]
+                item["property_place"] = prop["pr_place"]
+                item["property_image"] = str(prop["pr_image"])
+            else:
+                item["property_category"] = "N/A"
+                item["property_type"] = "N/A"
+                item["property_location"] = "N/A"
+                item["property_place"] = "N/A"
+                item["property_image"] = ""
+        except Exception:
+            item["property_category"] = "N/A"
+            item["property_type"] = "N/A"
+            item["property_location"] = "N/A"
+            item["property_place"] = "N/A"
+            item["property_image"] = ""
+
     values = JsonResponse(data, safe=False)
     return values
 

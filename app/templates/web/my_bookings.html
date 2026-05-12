@@ -77,13 +77,21 @@
         <div class="container-xxl py-5">
             <div class="container">
                 <div>
-                    <table id="tableData" class="table">
+                    <table id="tableData" class="table table-hover">
+                        <thead>
                         <tr>
                             <th>Sl No</th>
                             <th>Property Name</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Location</th>
                             <th>Amount</th>
+                            <th>Booked On</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
+                        </thead>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -198,34 +206,57 @@
         document.getElementById('modalImage').src = imageSrc;
     }
     function getData() {
-        // alert("1");
         var formData = new FormData();
         formData.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
         formData.append("action", "getData");
 
         $.ajax({
-
             url: "/my_bookings_list/",
             type: "POST",
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
-                $("#tableData tr:gt(0)").remove();
+                $("#tableData tbody").empty();
                 for (var i = 0; i < response.length; i++) {
                     var j = i + 1;
                     var amt = String(response[i].bk_amount).replace(/[^\d.]/g, '');
-                    $("#tableData").append('<tr><td>' + j + '</td><td style="display: none;">' + response[i].bk_id + '</td><td style="display: none;">' + response[i].bk_property_id + '</td><td>' + response[i].bk_seller_name + '</td><td>₹' + amt + '</td><td><button type="button" onClick="cancelBooking(' + response[i].bk_id + ', ' + response[i].bk_property_id + ');" class="btn btn-danger">Cancel</button</td></tr>');
+                    var propType = response[i].property_type || 'N/A';
+                    var typeBadge = propType.toLowerCase() === 'rent'
+                        ? '<span class="badge bg-info text-dark">Rent</span>'
+                        : '<span class="badge bg-success">Buy</span>';
+                    var category = response[i].property_category || 'N/A';
+                    var location = response[i].property_place || '';
+                    if (response[i].property_location) {
+                        location = location ? location + ', ' + response[i].property_location : response[i].property_location;
+                    }
+                    if (!location) location = 'N/A';
+                    var bookedOn = response[i].bk_created_date || 'N/A';
+                    var status = '<span class="badge bg-success">Confirmed</span>';
+
+                    $("#tableData tbody").append(
+                        '<tr>' +
+                            '<td>' + j + '</td>' +
+                            '<td style="display:none;">' + response[i].bk_id + '</td>' +
+                            '<td style="display:none;">' + response[i].bk_property_id + '</td>' +
+                            '<td>' + response[i].bk_seller_name + '</td>' +
+                            '<td>' + typeBadge + '</td>' +
+                            '<td>' + category + '</td>' +
+                            '<td>' + location + '</td>' +
+                            '<td>₹' + amt + '</td>' +
+                            '<td>' + bookedOn + '</td>' +
+                            '<td>' + status + '</td>' +
+                            '<td><button type="button" onClick="cancelBooking(' + response[i].bk_id + ', ' + response[i].bk_property_id + ');" class="btn btn-danger btn-sm">Cancel</button></td>' +
+                        '</tr>'
+                    );
                 }
             },
             error: function (request, error) {
                 console.error(error);
             },
             complete: function () {
-
             },
         });
-
     }
     getData();
 
