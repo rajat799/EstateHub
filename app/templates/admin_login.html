@@ -139,7 +139,6 @@
           const urlParams = new URLSearchParams(window.location.search);
           const isPathAdmin = window.location.pathname.includes('admin_login');
           if (urlParams.get('admin') === 'true' || isPathAdmin) {
-              $("#roleSelector").show();
               $("#selRole").val("Admin");
               $("#loginHeading").text("ADMIN LOGIN");
           } else {
