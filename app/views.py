@@ -623,7 +623,7 @@ def sellerProductsDetails(request):
                 user_count = PurchasedProducts.objects.filter(
                     Q(pp_name=data[i]["pd_name"]),
                     Q(pp_created_by=request.session["email"]) | Q(pp_created_by="") | Q(pp_created_by__isnull=True)
-                ).values("pp_user_email").distinct().count()
+                ).count()
                 data[i]["user_count"] = user_count
             return JsonResponse(data, safe=False)
 
