@@ -640,6 +640,18 @@
                 $("#forSell").empty();
                 $("#forRent").empty();
                 $("#forAll").empty();
+
+                var MAX_ITEMS = 6; // Show only 6 items per tab on homepage
+                var featuredCount = 0, sellCount = 0, rentCount = 0, allCount = 0;
+                var totalFeatured = 0, totalSell = 0, totalRent = 0;
+
+                // Count totals for each type
+                for (var k = 0; k < response.length; k++) {
+                    if (response[k].pr_property_type == "Featured") totalFeatured++;
+                    if (response[k].pr_property_type == "Sell") totalSell++;
+                    if (response[k].pr_property_type == "Rent") totalRent++;
+                }
+
                 for (var i = 0; i < response.length; i++) {
                     var j = i + 1;
                     let img = "/media/" + response[i].pr_image;
@@ -656,29 +668,42 @@
                         checkSold = '<small class="flex-fill text-center border-end py-2"><i class="text-primary btn btn-danger" style="color: white !important;"><a href="javascript:void(0)" style="color: white;">Sold</a></i></small>';
                     }
 
-                    if (response[i].pr_property_type == "Featured") {
-                        $("#propertyFeature").append('<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"> <div class="property-item rounded overflow-hidden"> <div class="position-relative overflow-hidden"> <a href=""><img class="" src="' + img + '" alt="" height="250" style="width: 100%;"></a> <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">' + category + '</div><div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">' + price + '</div></div><div class="p-4 pb-0"> <a class="d-block h5 mb-2">' + response[i].pr_seller_name + '</a> <p class="text-primary mb-2" style="font-size: 14px; font-weight: 600;"><i class="fas fa-store me-2"></i>Sold by: ' + response[i].pr_created_by + '</p> <p><i class="fa fa-map-marker-alt text-primary me-2"></i>' + response[i].pr_location + '</p><span>' + description + '</span></div><div class="d-flex border-top">' + checkSold + '</div></div></div>');
+                    let card = '<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"> <div class="property-item rounded overflow-hidden"> <div class="position-relative overflow-hidden"> <a href=""><img class="" src="' + img + '" alt="" height="250" style="width: 100%;"></a> <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">' + category + '</div><div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">' + price + '</div></div><div class="p-4 pb-0"> <a class="d-block h5 mb-2">' + response[i].pr_seller_name + '</a> <p class="text-primary mb-2" style="font-size: 14px; font-weight: 600;"><i class="fas fa-store me-2"></i>Sold by: ' + response[i].pr_created_by + '</p> <p><i class="fa fa-map-marker-alt text-primary me-2"></i>' + response[i].pr_location + '</p><span>' + description + '</span></div><div class="d-flex border-top">' + checkSold + '</div></div></div>';
+
+                    if (response[i].pr_property_type == "Featured" && featuredCount < MAX_ITEMS) {
+                        $("#propertyFeature").append(card);
+                        featuredCount++;
                     }
 
-                    if (response[i].pr_property_type == "Sell") {
-                        $("#forSell").append('<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"> <div class="property-item rounded overflow-hidden"> <div class="position-relative overflow-hidden"> <a href=""><img class="" src="' + img + '" alt="" height="250" style="width: 100%;"></a> <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">' + category + '</div><div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">' + price + '</div></div><div class="p-4 pb-0"> <a class="d-block h5 mb-2">' + response[i].pr_seller_name + '</a> <p class="text-primary mb-2" style="font-size: 14px; font-weight: 600;"><i class="fas fa-store me-2"></i>Sold by: ' + response[i].pr_created_by + '</p> <p><i class="fa fa-map-marker-alt text-primary me-2"></i>' + response[i].pr_location + '</p><span>' + description + '</span></div><div class="d-flex border-top">' + checkSold + '</div></div></div>');
-
+                    if (response[i].pr_property_type == "Sell" && sellCount < MAX_ITEMS) {
+                        $("#forSell").append(card);
+                        sellCount++;
                     }
 
-                    if (response[i].pr_property_type == "Rent") {
-                        $("#forRent").append('<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"> <div class="property-item rounded overflow-hidden"> <div class="position-relative overflow-hidden"> <a href=""><img class="" src="' + img + '" alt="" height="250" style="width: 100%;"></a> <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">' + category + '</div><div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">' + price + '</div></div><div class="p-4 pb-0"> <a class="d-block h5 mb-2">' + response[i].pr_seller_name + '</a> <p class="text-primary mb-2" style="font-size: 14px; font-weight: 600;"><i class="fas fa-store me-2"></i>Sold by: ' + response[i].pr_created_by + '</p> <p><i class="fa fa-map-marker-alt text-primary me-2"></i>' + response[i].pr_location + '</p><span>' + description + '</span></div><div class="d-flex border-top">' + checkSold + '</div></div></div>');
+                    if (response[i].pr_property_type == "Rent" && rentCount < MAX_ITEMS) {
+                        $("#forRent").append(card);
+                        rentCount++;
                     }
 
-                    $("#forAll").append('<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s"> <div class="property-item rounded overflow-hidden"> <div class="position-relative overflow-hidden"> <a href=""><img class="" src="' + img + '" alt="" height="250" style="width: 100%;"></a> <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">' + category + '</div><div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">' + price + '</div></div><div class="p-4 pb-0"> <a class="d-block h5 mb-2">' + response[i].pr_seller_name + '</a> <p class="text-primary mb-2" style="font-size: 14px; font-weight: 600;"><i class="fas fa-store me-2"></i>Sold by: ' + response[i].pr_created_by + '</p> <p><i class="fa fa-map-marker-alt text-primary me-2"></i>' + response[i].pr_location + '</p><span>' + description + '</span></div><div class="d-flex border-top">' + checkSold + '</div></div></div>');
+                    if (allCount < MAX_ITEMS) {
+                        $("#forAll").append(card);
+                        allCount++;
+                    }
                 }
 
-                $("#propertyFeature").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
-
-                $("#forSell").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
-
-                $("#forRent").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
-
-                $("#forAll").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
+                // Only show "Browse More" if there are more items than the limit
+                if (totalFeatured > MAX_ITEMS) {
+                    $("#propertyFeature").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
+                }
+                if (totalSell > MAX_ITEMS) {
+                    $("#forSell").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
+                }
+                if (totalRent > MAX_ITEMS) {
+                    $("#forRent").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
+                }
+                if (response.length > MAX_ITEMS) {
+                    $("#forAll").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/propertylist/">Browse More Property</a> </div>');
+                }
             },
             error: function (request, error) {
                 console.error(error);
@@ -709,7 +734,9 @@
             processData: false,
             contentType: false,
             success: function (response) {
-                for (var i = 0; i < response.length; i++) {
+                var MAX_PRODUCTS = 6; // Show only 6 products on homepage
+
+                for (var i = 0; i < response.length && i < MAX_PRODUCTS; i++) {
                     var j = i + 1;
                     let img = "/media/" + response[i].pd_image;
                     let description = response[i].pd_desc.substr(0, 100);
@@ -724,7 +751,10 @@
                     
                 }
 
-                $("#ProductsAll").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/productlist/">Browse More Products</a> </div>');
+                // Only show "Browse More" if there are more products than the limit
+                if (response.length > MAX_PRODUCTS) {
+                    $("#ProductsAll").append('<div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s"> <a class="btn btn-primary py-3 px-5" href="/productlist/">Browse More Products</a> </div>');
+                }
        
             },
             error: function (request, error) {
