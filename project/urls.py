@@ -32,6 +32,7 @@ urlpatterns = [
     path("propertytype/", views.webPropertytype),
     path("testimonial/", views.webTestimonial),
     path("check_admin_login/", views.checkAdminLogin, name="login"),
+    path("seller_login/", views.openLogin, name="login"),
     path("admin_login/", views.openLogin, name="login"),
     path("logout/", views.logout, name="login"),
     path("logout_web/", views.logoutWeb, name="login"),

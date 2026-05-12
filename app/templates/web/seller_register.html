@@ -100,7 +100,7 @@
                             <input type="button" id="btn_submit" value="Register as Seller" class="btn btn-success">
                         </div>
 
-                        <p class="text-center"> Already have a seller account?<a href="/admin_login/">Login as Seller</a></p>
+                        <p class="text-center"> Already have a seller account?<a href="/seller_login/">Login as Seller</a></p>
                         <a href="/" class="text-center">Go to website</a>
 
                     </div>
@@ -252,7 +252,7 @@
                         // New JSON format
                         if (response.status === 'success') {
                             alert(response.message || "Seller Registered Successfully");
-                            window.location = '/admin_login/';
+                            window.location = '/seller_login/';
                         } else {
                             alert(response.message || "Registration failed");
                         }
@@ -260,7 +260,7 @@
                         alert("You are already Registered Seller, Please Login");
                     } else {
                         alert("Seller Registered Successfully");
-                        window.location = '/admin_login/';
+                        window.location = '/seller_login/';
                     }
                 },
                 error: function (request, error) {
