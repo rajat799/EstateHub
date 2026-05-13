@@ -331,7 +331,7 @@
             success: function (response) {
 
                 for (let i = 0; i < response.length; i++) {
-                    let imgSub = "/media/" + response[i].pd_image;
+                    let img360 = "/media/" + response[i].pr_image1;
                     $("#name").text(response[0].pr_seller_name);
                     $("#name1").text(response[0].pr_seller_name);
                     $("#seller_info").text(response[0].pr_created_by);
@@ -341,7 +341,7 @@
                     $("#txtFees").val("₹" + response[0].pr_fee);
                     $("#desc").text(response[0].pr_desc);
                     $("#mobile").text(response[0].pr_mobile_no);
-                    $(".big_img").attr("src", imgSub);
+                    $(".big_img").attr("src", img360);
                     $("#txtID").val(response[0].pr_id);
                     $("#email").text(response[0].pr_created_by);
                     $("#address").text(response[0].pr_place);
